@@ -1,3 +1,0 @@
-INDEX VERSION 1.134+D:\Gokul Projects\Digital CookBook\.metadata\.plugins\org.eclipse.jdt.core
-3042130685.index
-1865797976.index
