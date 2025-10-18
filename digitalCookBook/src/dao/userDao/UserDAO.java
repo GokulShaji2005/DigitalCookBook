@@ -1,4 +1,4 @@
-package db;
+package dao.userDao;
 
 import java.sql.*;
 

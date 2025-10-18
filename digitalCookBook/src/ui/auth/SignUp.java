@@ -100,7 +100,7 @@ public class SignUp{
         gbc.anchor = GridBagConstraints.EAST;
         cardPanel.add(roleLabel, gbc);
 
-        roleCombo = new JComboBox<>(new String[]{"User", "Cook"});
+        roleCombo = new JComboBox<>(new String[]{"User", "Chef"});
         roleCombo.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         roleCombo.setBackground(Color.WHITE);
         roleCombo.setForeground(Color.DARK_GRAY);
@@ -139,6 +139,7 @@ public class SignUp{
                     username.setText("");
                     password.setText("");
                     roleCombo.setSelectedIndex(0);
+                    
                     // TODO: Navigate to login UI here if needed
                 } else {
                     JOptionPane.showMessageDialog(frame, "Sign Up Failed! Username already exists.");

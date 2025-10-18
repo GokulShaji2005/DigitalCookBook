@@ -10,7 +10,7 @@ public class DBConnection {
     private static final String USERNAME = "root";
     private static final String PASSWORD = "";
 
-    private DBConnection() {} // prevent instantiation
+    public DBConnection() {} // prevent instantiation
 
     public static Connection getConnection() throws SQLException, ClassNotFoundException {
         Class.forName("com.mysql.cj.jdbc.Driver");

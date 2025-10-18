@@ -1,4 +1,4 @@
-package dao.userDao;
+package dao.recipeDao;
 
 import java.sql.*;
 import dao.dbConnection.DBConnection;

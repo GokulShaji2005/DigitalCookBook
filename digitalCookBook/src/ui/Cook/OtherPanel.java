@@ -84,5 +84,5 @@ public class OtherPanel extends JPanel {
 
     public JComboBox<String> getFilterComboBox() {
         return filterComboBox;
-    }
+    }
 }

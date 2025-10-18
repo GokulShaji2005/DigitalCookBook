@@ -6,7 +6,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import services.LoginService;
 import services.SignUpService;
-
+import ui.Cook.UserPanel;
+import model.User;
 public class AuthUi {
     JFrame frame;
     JPanel mainPanel;
@@ -79,16 +80,19 @@ public class AuthUi {
             String pass = loginPanel.getPassword();
             LoginService loginService = new LoginService();
             try {
-                boolean success = loginService.loginService(user, pass);
-                if (success) {
+                User loggedInUser = loginService.loginService(user, pass);
+                if (loggedInUser != null) {
                     JOptionPane.showMessageDialog(frame, "Login Successful!");
                     loginPanel.clearFields();
-                    // TODO: Open dashboard
+
+                   new UserPanel(loggedInUser);
+
                 } else {
                     JOptionPane.showMessageDialog(frame, "Invalid username or password!");
                 }
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(frame, "Error during login!");
+                ex.printStackTrace();
             }
         });
 

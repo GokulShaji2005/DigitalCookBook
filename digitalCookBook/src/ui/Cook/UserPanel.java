@@ -2,13 +2,20 @@ package ui.Cook;
 
 import javax.swing.*;
 import java.awt.*;
+import model.User;
 
 public class UserPanel {
     private JFrame frame;
     private JPanel mainContent;
     private CardLayout cardLayout;
+    public User loggedInUser;  
+    public UserPanel(User loggedInUser) {
+    	// username/password from form
 
-    public UserPanel(String username) {
+    	 this.loggedInUser = loggedInUser; 
+    	
+   
+    
         frame = new JFrame("Recipe Manager Dashboard");
         frame.setSize(1000, 650);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -24,7 +31,7 @@ public class UserPanel {
         projectLabel.setForeground(Color.WHITE);
         projectLabel.setFont(new Font("Segoe UI", Font.BOLD, 22));
 
-        JLabel welcomeLabel = new JLabel("Welcome, " + username);
+        JLabel welcomeLabel = new JLabel("Welcome, " + loggedInUser.getUsername());
         welcomeLabel.setForeground(Color.WHITE);
         welcomeLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
 
@@ -60,7 +67,10 @@ public class UserPanel {
 
         // Placeholder panels
         JPanel dashboardPanel = createPagePanel("Dashboard Content");
-        RecipiePanel recipePanel = new RecipiePanel(); // use custom panel
+        
+//        User loggedInUser = loginService.loginService(username);
+
+        RecipiePanel recipePanel = new RecipiePanel(loggedInUser.getId()); // use custom panel
         JPanel othersPanel = createPagePanel("Coming Soon...");
 
         mainContent.add(dashboardPanel, "Dashboard");
@@ -111,7 +121,5 @@ public class UserPanel {
         return panel;
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new UserPanel("Gokul"));
-    }
+  
 }

@@ -1,14 +1,35 @@
 package ui.Cook;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
 
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
+import java.util.List;
+import java.util.ArrayList;
+
+import dao.recipeDao.RecipeTitle;
+import services.LoginService;
 public class RecipiePanel extends JPanel {
-
+int userId;
     private JPanel recipeListPanel;
     private JButton addRecipeButton;
 
-    public RecipiePanel() {
+    public RecipiePanel(int userId) {
+    	
+    	  this.userId = userId;
+		
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
 
@@ -37,12 +58,23 @@ public class RecipiePanel extends JPanel {
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         add(scrollPane, BorderLayout.CENTER);
 
-        // Example entries (optional)
-        addRecipe("Spaghetti Bolognese");
-        addRecipe("Chocolate Cake");
-        addRecipe("Chicken Curry");
+//        // Example entries (optional)
+//        addRecipe("Spaghetti Bolognese");
+//        addRecipe("Chocolate Cake");
+//        addRecipe("Chicken Curry");
+        loadRecipes();
     }
 
+    public void loadRecipes() {
+        try {
+            List<RecipeTitle> recipes = RecipeTitle.getRecipeTitles(userId);
+            for (RecipeTitle r : recipes) {
+                addRecipe(r.getTitle());
+            }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
     public void addRecipe(String recipeName) {
         JPanel card = new JPanel(new BorderLayout());
         card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 70));
@@ -100,18 +132,18 @@ public class RecipiePanel extends JPanel {
         recipeListPanel.revalidate();
         recipeListPanel.repaint();
     }
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("Test Recipe Panel");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(500, 500);
-            frame.setLocationRelativeTo(null);
-
-            RecipiePanel panel = new RecipiePanel();
-            frame.setContentPane(panel);
-
-            frame.setVisible(true);
-        });
-    }
+//    public static void main(String[] args) {
+//        SwingUtilities.invokeLater(() -> {
+//            JFrame frame = new JFrame("Test Recipe Panel");
+//            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//            frame.setSize(500, 500);
+//            frame.setLocationRelativeTo(null);
+////            LoginService loginId=new LoginService();
+//            RecipiePanel panel = new RecipiePanel(loginId);
+//            frame.setContentPane(panel);
+//
+//            frame.setVisible(true);
+//        });
+//    }
 
 }

@@ -1,5 +1,5 @@
-package db;
-
+package dao.recipeDao;
+import dao.dbConnection.DBConnection;
 /*
  * Author: @AmyAnup
  * Date: 13/10/25
@@ -64,16 +64,16 @@ class Recipe {
 // DAO class to interact with the database
 public class RecipeDAO {
     // Database connection info
-    private final String url = "jdbc:mysql://localhost:3306/recipemanagerdb"; // ✅ Corrected database name
-    private final String user = "root"; // XAMPP default
-    private final String password = ""; // XAMPP default
+//    private final String url = "jdbc:mysql://localhost:3306/recipemanagerdb"; // ✅ Corrected database name
+//    private final String user = "root"; // XAMPP default
+//    private final String password = ""; // XAMPP default
 
     // Add a new recipe
-    public void addRecipe(Recipe recipe) {
+    public void addRecipe(Recipe recipe) throws ClassNotFoundException {
         String sql = "INSERT INTO recipe (title, ingredients, instructions, category, created_by) VALUES (?, ?, ?, ?, ?)";
-        try (Connection conn = DriverManager.getConnection(url, user, password);
+        try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-
+        
             stmt.setString(1, recipe.getTitle());
             stmt.setString(2, recipe.getIngredients());
             stmt.setString(3, recipe.getInstructions());
@@ -93,15 +93,16 @@ public class RecipeDAO {
     }
 
     // Retrieve all recipes
-    public List<Recipe> getAllRecipes() {
+    public List<Recipe> getAllRecipes(int UserId) throws ClassNotFoundException {
         List<Recipe> list = new ArrayList<>();
-        String sql = "SELECT * FROM recipe ORDER BY created_at DESC";
-        try (Connection conn = DriverManager.getConnection(url, user, password);
+        String sql = "SELECT * FROM recipe WHERE user_id = ? ORDER BY created_at DESC";
+        try (Connection conn = DBConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
-
+        	((PreparedStatement) stmt).setInt(1, UserId);
             while (rs.next()) {
                 Recipe r = new Recipe(
+                	
                         rs.getInt("id"),
                         rs.getString("title"),
                         rs.getString("ingredients"),
@@ -111,6 +112,7 @@ public class RecipeDAO {
                         rs.getTimestamp("created_at")
                 );
                 list.add(r);
+                
             }
 
         } catch (SQLException e) {
@@ -120,9 +122,9 @@ public class RecipeDAO {
     }
 
     // Update an existing recipe
-    public void updateRecipe(Recipe recipe) {
+    public void updateRecipe(Recipe recipe) throws ClassNotFoundException {
         String sql = "UPDATE recipe SET title=?, ingredients=?, instructions=?, category=?, created_by=? WHERE id=?";
-        try (Connection conn = DriverManager.getConnection(url, user, password);
+        try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, recipe.getTitle());
@@ -141,9 +143,9 @@ public class RecipeDAO {
     }
 
     // Delete a recipe by ID
-    public void deleteRecipe(int id) {
+    public void deleteRecipe(int id) throws ClassNotFoundException {
         String sql = "DELETE FROM recipe WHERE id=?";
-        try (Connection conn = DriverManager.getConnection(url, user, password);
+        try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, id);
@@ -156,17 +158,17 @@ public class RecipeDAO {
     }
 
     // Test the DAO
-    public static void main(String[] args) {
-        RecipeDAO dao = new RecipeDAO();
-
-        // Add a recipe
-        Recipe newRecipe = new Recipe("Mashed Potatoes", "Potatoes, Butter, Milk, Salt", "Boil, mash, and mix all ingredients", "Side Dish", "Amy");
-        dao.addRecipe(newRecipe);
-
-        // List all recipes
-        List<Recipe> recipes = dao.getAllRecipes();
-        for (Recipe r : recipes) {
-            System.out.println(r.getId() + " | " + r.getTitle() + " | " + r.getCategory() + " | " + r.getCreatedAt());
-        }
-    }
+//    public static void main(String[] args) {
+//        RecipeDAO dao = new RecipeDAO();
+//
+//        // Add a recipe
+//        Recipe newRecipe = new Recipe("Mashed Potatoes", "Potatoes, Butter, Milk, Salt", "Boil, mash, and mix all ingredients", "Side Dish", "Amy");
+//        dao.addRecipe(newRecipe);
+//
+//        // List all recipes
+//        List<Recipe> recipes = dao.getAllRecipes();
+//        for (Recipe r : recipes) {
+//            System.out.println(r.getId() + " | " + r.getTitle() + " | " + r.getCategory() + " | " + r.getCreatedAt());
+//        }
+//    }
 }
