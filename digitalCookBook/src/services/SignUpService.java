@@ -8,7 +8,7 @@ import dao.dbConnection.DBConnection;
 public class SignUpService {
 
     public boolean signUpService(String username, String password, String role) throws SQLException, ClassNotFoundException {
-        String sql = "INSERT INTO users (username, password, role) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO user (username, password, role) VALUES (?, ?, ?)";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {

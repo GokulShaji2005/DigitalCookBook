@@ -44,6 +44,27 @@ public class RecipeTitle {
 
         return list;
     }
+    
+    public  static List<RecipeTitle> getAllRecipes() throws ClassNotFoundException {
+        List<RecipeTitle> list = new ArrayList<>();
+        String sql = "SELECT recipe_id, title FROM recipe  ORDER BY created_at DESC";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                list.add(new RecipeTitle(rs.getInt("recipe_id"), rs.getString("title")));
+            }
+
+        } catch (SQLException e) {
+            System.err.println("❌ Error fetching recipe titles: " + e.getMessage());
+        }
+
+        return list;
+    }
 
     
 }

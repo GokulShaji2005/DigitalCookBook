@@ -1,73 +1,91 @@
-package dao.userDao;
-
-import java.sql.*;
-
 /**
  * Author: Amy Anup
  * Date: 14/10/2025
  * 
  * UserDAO handles database operations on the 'user' table.
  */
+
+
+
+/**
+ * UserDAO handles database operations on the 'user' table.
+ * Supports fetching users by role: Chef or Viewer.
+ */
+package dao.userDao;
+import dao.dbConnection.DBConnection;
+import model.User;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
 public class UserDAO {
 
-    /**
-     * Validate a user's login credentials.
-     * 
-     * @param username the username input
-     * @param password the password input
-     * @return true if a matching user exists in the database, false otherwise
-     */
-    public boolean validateUser(String username, String password) {
-        boolean valid = false;
-        String query = "SELECT * FROM user WHERE username=? AND password=?";
+    // 🔹 Fetch all Chefs
+    public List<User> getChefs() throws ClassNotFoundException {
+        List<User> chefs = new ArrayList<>();
+        String query = "SELECT id, username, role FROM user WHERE role = 'Chef'";
 
-        try (Connection conn = dbConnection.getConnection();
-             PreparedStatement pst = conn.prepareStatement(query)) {
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
 
-            pst.setString(1, username);
-            pst.setString(2, password);
-
-            try (ResultSet rs = pst.executeQuery()) {
-                valid = rs.next(); // true if a row exists
-            }
-
-        } catch (Exception e) {
-            System.out.println("Error validating user: " + e.getMessage());
-        }
-
-        return valid;
-    }
-
-    /**
-     * Fetch all users and print to console (optional test method).
-     */
-    public void getAllUsers() {
-        String query = "SELECT * FROM user";
-
-        try (Connection conn = dbConnection.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(query)) {
-
-            System.out.println("Users in database:");
             while (rs.next()) {
-                System.out.println(rs.getInt("id") + "  " + rs.getString("username") + "  " + rs.getString("password"));
+                chefs.add(new User(
+                        rs.getInt("id"),
+                        rs.getString("username"),
+                        rs.getString("role")
+                ));
             }
 
-        } catch (Exception e) {
-            System.out.println("Error fetching users: " + e.getMessage());
+        } catch (SQLException e) {
+            System.err.println("❌ Error fetching chefs: " + e.getMessage());
         }
+
+        return chefs;
     }
 
-    /**
-     * Main method for quick testing.
-     */
-    public static void main(String[] args) {
-        UserDAO dao = new UserDAO();
+    // 🔹 Fetch all Viewers
+    public List<User> getViewers() throws ClassNotFoundException {
+        List<User> viewers = new ArrayList<>();
+        String query = "SELECT id, username, role FROM user WHERE role = 'Viewer'";
 
-        dao.getAllUsers(); // Test fetching all users
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
 
-        System.out.println("\nLogin test:");
-        System.out.println("Honey/honey123 -> " + dao.validateUser("Honey", "honey123"));
-        System.out.println("Honey/wrongpass -> " + dao.validateUser("Honey", "wrongpass"));
+            while (rs.next()) {
+                viewers.add(new User(
+                        rs.getInt("id"),
+                        rs.getString("username"),
+                        rs.getString("role")
+                ));
+            }
+
+        } catch (SQLException e) {
+            System.err.println("❌ Error fetching viewers: " + e.getMessage());
+        }
+
+        return viewers;
     }
 }
+
+
+   
+    /**
+     * Main method for testing
+     */
+//    public static void main(String[] args) {
+//        UserDAO dao = new UserDAO();
+//
+//        System.out.println("All Users:");
+//        dao.getAllUsers();
+//
+//        System.out.println("\nChefs:");
+//        dao.getChefs();
+//
+//        System.out.println("\nViewers:");
+//        dao.getViewers();
+//
+//        
+//    }
+

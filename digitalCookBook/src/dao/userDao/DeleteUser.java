@@ -1,4 +1,4 @@
-package dao.recipeDao;
+package dao.userDao;
 
 import java.sql.*;
 import dao.dbConnection.DBConnection;
@@ -13,12 +13,12 @@ public class DeleteUser {
     }
 
     // 🔹 Method — performs deletion
-    public void deleteUser(String username) throws SQLException {
-        String sql = "DELETE FROM users WHERE username = ?";
+    public void deleteUser(int id,String username) throws SQLException {
+        String sql = "DELETE FROM user WHERE id = ?";
 
         try (
         	PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, username);
+            stmt.setInt(1, id);
             int rows = stmt.executeUpdate();
 
             if (rows > 0)
@@ -28,13 +28,4 @@ public class DeleteUser {
         }
     }
 
-    public static void main(String[] args) {
-        try {
-            DeleteUser du = new DeleteUser(); // constructor called
-            du.deleteUser("gokul@2005");        // method called
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("❌ Error deleting user: " + e.getMessage());
-        }
-    }
 }
