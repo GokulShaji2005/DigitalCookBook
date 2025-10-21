@@ -3,6 +3,8 @@ package ui.Cook;
 import javax.swing.*;
 import java.awt.*;
 import model.User;
+import util.LogoutAction;
+import ui.auth.AuthUi;
 
 public class UserPanel {
     private JFrame frame;
@@ -76,14 +78,15 @@ public class UserPanel {
         mainContent.add(dashboardPanel, "Dashboard");
         mainContent.add(recipePanel, "Recipes");
         mainContent.add(othersPanel, "Others");
-
+//        mainContent.add(btnLogout, "Logout");
         frame.add(mainContent, BorderLayout.CENTER);
 
         // 🔹 Button Navigation
         btnDashboard.addActionListener(e -> cardLayout.show(mainContent, "Dashboard"));
         btnRecipes.addActionListener(e -> cardLayout.show(mainContent, "Recipes"));
         btnOthers.addActionListener(e -> cardLayout.show(mainContent, "Others"));
-        btnLogout.addActionListener(e -> frame.dispose());
+        btnLogout.addActionListener(e -> LogoutAction.performLogout(frame));
+
 
         frame.setVisible(true);
     }

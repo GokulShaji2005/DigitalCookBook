@@ -93,7 +93,7 @@ public class CardPanel extends JPanel {
             gbc.anchor = GridBagConstraints.EAST;
             this.add(roleLabel, gbc);
 
-            roleCombo = new JComboBox<>(new String[]{"User", "Cook"});
+            roleCombo = new JComboBox<>(new String[]{"Viewer", "Chef"});
             roleCombo.setFont(new Font("Segoe UI", Font.PLAIN, 14));
             roleCombo.setBackground(Color.WHITE);
             roleCombo.setForeground(Color.DARK_GRAY);

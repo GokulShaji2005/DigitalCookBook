@@ -1,20 +1,25 @@
+
 package ui.Cook;
 
-import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import java.awt.*;
-import java.io.File;
+import dao.recipeDao.RecipeDAO;
+import model.Recipe;
 
+import javax.swing.*;
+import java.awt.*;
+import ui.Cook.RecipiePanel;
 public class RecipeAddingPanel extends JPanel {
 
     private JTextField nameField;
     private JTextField categoryField;
     private JTextArea ingredientsArea;
     private JTextArea stepsArea;
-    private JLabel imagePreview;
-    private File selectedImage;
 
-    public RecipeAddingPanel() {
+    private int userId; // ✅ store user ID for saving recipes
+
+    public RecipeAddingPanel(int userId) {
+//    	RecipiePanel recipieLoader=new RecipiePanel(); 
+    	
+        this.userId = userId;
         setLayout(new BorderLayout());
         setBackground(new Color(245, 247, 250));
 
@@ -53,27 +58,26 @@ public class RecipeAddingPanel extends JPanel {
         styleTextArea(ingredientsArea);
         JScrollPane ingredientScroll = new JScrollPane(ingredientsArea);
         ingredientScroll.setBorder(BorderFactory.createEmptyBorder());
-
-        JLabel imageLabel = createLabel("Image:");
-        imagePreview = new JLabel("No Image", SwingConstants.CENTER);
-        imagePreview.setOpaque(true);
-        imagePreview.setBackground(new Color(230, 230, 230));
-        imagePreview.setPreferredSize(new Dimension(200, 200));
-        imagePreview.setMaximumSize(new Dimension(120, 120));
-        imagePreview.setMinimumSize(new Dimension(120, 120));
-        imagePreview.setBorder(BorderFactory.createLineBorder(new Color(180, 180, 180)));
-        imagePreview.setHorizontalAlignment(SwingConstants.CENTER);
-        imagePreview.setVerticalAlignment(SwingConstants.CENTER);
-        imagePreview.setIconTextGap(0);
-
-
-
-        JButton uploadButton = new JButton("Upload Image");
-        stylePrimaryButton(uploadButton);
-        uploadButton.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-        uploadButton.addActionListener(e -> chooseImage());
-
+//        JLabel imageLabel = createLabel("Image:");
+////    imagePreview = new JLabel("No Image", SwingConstants.CENTER);
+////    imagePreview.setOpaque(true);
+////    imagePreview.setBackground(new Color(230, 230, 230));
+////    imagePreview.setPreferredSize(new Dimension(200, 200));
+////    imagePreview.setMaximumSize(new Dimension(120, 120));
+////    imagePreview.setMinimumSize(new Dimension(120, 120));
+////    imagePreview.setBorder(BorderFactory.createLineBorder(new Color(180, 180, 180)));
+////    imagePreview.setHorizontalAlignment(SwingConstants.CENTER);
+////    imagePreview.setVerticalAlignment(SwingConstants.CENTER);
+////    imagePreview.setIconTextGap(0);
+////
+////
+////
+////    JButton uploadButton = new JButton("Upload Image");
+////    stylePrimaryButton(uploadButton);
+////    uploadButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+////
+////    uploadButton.addActionListener(e -> chooseImage());
+//
         leftPanel.add(nameLabel);
         leftPanel.add(Box.createVerticalStrut(5));
         leftPanel.add(nameField);
@@ -88,12 +92,6 @@ public class RecipeAddingPanel extends JPanel {
         leftPanel.add(Box.createVerticalStrut(5));
         leftPanel.add(ingredientScroll);
         leftPanel.add(Box.createVerticalStrut(15));
-
-        leftPanel.add(imageLabel);
-        leftPanel.add(Box.createVerticalStrut(5));
-        leftPanel.add(imagePreview);
-        leftPanel.add(Box.createVerticalStrut(10));
-        leftPanel.add(uploadButton);
 
         // === RIGHT PANEL ===
         JPanel rightPanel = new JPanel();
@@ -126,63 +124,111 @@ public class RecipeAddingPanel extends JPanel {
 
         bottomPanel.add(cancelButton);
         bottomPanel.add(saveButton);
-
         cardPanel.add(bottomPanel, BorderLayout.SOUTH);
 
         add(cardPanel, BorderLayout.CENTER);
+
+        // ✅ Add action for SAVE button
+        saveButton.addActionListener(e -> {
+            saveRecipe();
+            JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
+            if (frame != null) {
+                frame.dispose(); // closes the window
+            }
+         
+        });
+
+
+        // Cancel button can go back or clear fields
+        cancelButton.addActionListener(e -> clearFields());
     }
+////private void chooseImage() {
+////JFileChooser fileChooser = new JFileChooser();
+////fileChooser.setDialogTitle("Select Recipe Image");
+////fileChooser.setFileFilter(new FileNameExtensionFilter("Image Files", "jpg", "png", "jpeg"));
+////
+////int result = fileChooser.showOpenDialog(this);
+////if (result == JFileChooser.APPROVE_OPTION) {
+////    selectedImage = fileChooser.getSelectedFile();
+////    ImageIcon icon = new ImageIcon(selectedImage.getAbsolutePath());
+////    Image img = icon.getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH);
+////    imagePreview.setText("");
+////    imagePreview.setIcon(new ImageIcon(img));
+////}
+////}
+////private void chooseImage() {
+////JFileChooser fileChooser = new JFileChooser();
+////fileChooser.setDialogTitle("Select Recipe Image");
+////fileChooser.setFileFilter(new FileNameExtensionFilter("Image Files", "jpg", "png", "jpeg"));
+////
+////int result = fileChooser.showOpenDialog(this);
+////if (result == JFileChooser.APPROVE_OPTION) {
+////    selectedImage = fileChooser.getSelectedFile();
+////    ImageIcon icon = new ImageIcon(selectedImage.getAbsolutePath());
+////
+////    // Get the size of the preview box
+////    int boxWidth = 120;
+////    int boxHeight = 120;
+////
+////    // Calculate scaling factor to fit within the box
+////    Image img = icon.getImage();
+////    double widthRatio = (double) boxWidth / img.getWidth(null);
+////    double heightRatio = (double) boxHeight / img.getHeight(null);
+////    double scale = Math.min(widthRatio, heightRatio);
+////
+////    int newWidth = (int) (img.getWidth(null) * scale);
+////    int newHeight = (int) (img.getHeight(null) * scale);
+////
+////    Image scaledImg = img.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
+////
+////    imagePreview.setText("");
+////    imagePreview.setIcon(new ImageIcon(scaledImg));
+////    imagePreview.setHorizontalAlignment(SwingConstants.CENTER);
+////    imagePreview.setVerticalAlignment(SwingConstants.CENTER);
+////    imagePreview.revalidate();
+////    imagePreview.repaint();
+////}
+////}
 
-    // --- Image Chooser ---
-//    private void chooseImage() {
-//        JFileChooser fileChooser = new JFileChooser();
-//        fileChooser.setDialogTitle("Select Recipe Image");
-//        fileChooser.setFileFilter(new FileNameExtensionFilter("Image Files", "jpg", "png", "jpeg"));
-//
-//        int result = fileChooser.showOpenDialog(this);
-//        if (result == JFileChooser.APPROVE_OPTION) {
-//            selectedImage = fileChooser.getSelectedFile();
-//            ImageIcon icon = new ImageIcon(selectedImage.getAbsolutePath());
-//            Image img = icon.getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH);
-//            imagePreview.setText("");
-//            imagePreview.setIcon(new ImageIcon(img));
-//        }
-//    }
-    private void chooseImage() {
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("Select Recipe Image");
-        fileChooser.setFileFilter(new FileNameExtensionFilter("Image Files", "jpg", "png", "jpeg"));
+    // --- Save Recipe Logic ---
+    private void saveRecipe() {
+        String name = nameField.getText().trim();
+        String category = categoryField.getText().trim();
+        String ingredients = ingredientsArea.getText().trim();
+        String steps = stepsArea.getText().trim();
 
-        int result = fileChooser.showOpenDialog(this);
-        if (result == JFileChooser.APPROVE_OPTION) {
-            selectedImage = fileChooser.getSelectedFile();
-            ImageIcon icon = new ImageIcon(selectedImage.getAbsolutePath());
+        if (name.isEmpty() || category.isEmpty() || ingredients.isEmpty() || steps.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "⚠ Please fill all fields before saving!", "Missing Info", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
-            // Get the size of the preview box
-            int boxWidth = 120;
-            int boxHeight = 120;
+        Recipe recipe = new Recipe();
+        recipe.setTitle(name);
+        recipe.setCategory(category);
+        recipe.setIngredients(ingredients);
+        recipe.setInstructions(steps);
+        recipe.setUser_id(userId);
 
-            // Calculate scaling factor to fit within the box
-            Image img = icon.getImage();
-            double widthRatio = (double) boxWidth / img.getWidth(null);
-            double heightRatio = (double) boxHeight / img.getHeight(null);
-            double scale = Math.min(widthRatio, heightRatio);
+        try {
+            RecipeDAO dao = new RecipeDAO();
+            dao.addRecipe(recipe);
 
-            int newWidth = (int) (img.getWidth(null) * scale);
-            int newHeight = (int) (img.getHeight(null) * scale);
-
-            Image scaledImg = img.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
-
-            imagePreview.setText("");
-            imagePreview.setIcon(new ImageIcon(scaledImg));
-            imagePreview.setHorizontalAlignment(SwingConstants.CENTER);
-            imagePreview.setVerticalAlignment(SwingConstants.CENTER);
-            imagePreview.revalidate();
-            imagePreview.repaint();
+            JOptionPane.showMessageDialog(this, "✅ Recipe added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+            clearFields();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "❌ Error saving recipe: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            ex.printStackTrace();
         }
     }
 
+    private void clearFields() {
+        nameField.setText("");
+        categoryField.setText("");
+        ingredientsArea.setText("");
+        stepsArea.setText("");
+    }
 
-    // --- UI Helper Methods ---
+    // --- UI Helpers ---
     private JLabel createLabel(String text) {
         JLabel label = new JLabel(text);
         label.setFont(new Font("Segoe UI", Font.PLAIN, 16));
@@ -231,17 +277,6 @@ public class RecipeAddingPanel extends JPanel {
         button.setBorder(BorderFactory.createEmptyBorder(8, 16, 8, 16));
     }
 
-    // --- Test main ---
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("Add Recipe");
-            frame.setSize(900, 600);
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setLocationRelativeTo(null);
-
-            RecipeAddingPanel panel = new RecipeAddingPanel();
-            frame.add(panel);
-            frame.setVisible(true);
-        });
-    }
+   
 }
+

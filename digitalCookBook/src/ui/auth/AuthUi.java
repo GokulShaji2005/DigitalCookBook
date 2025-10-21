@@ -1,22 +1,20 @@
 package ui.auth;
 
+import ui.admin.AdminPanel;
+import ui.Cook.UserPanel;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import services.LoginService;
 import services.SignUpService;
-import ui.Cook.UserPanel;
 import model.User;
+import ui.viewer.*;
 public class AuthUi {
     JFrame frame;
     JPanel mainPanel;
     CardLayout cardLayout;
-
-    // Toggle label at bottom
     JLabel toggleLabel;
-
-    // Panels
     CardPanel loginPanel;
     CardPanel signUpPanel;
 
@@ -30,19 +28,19 @@ public class AuthUi {
         JPanel backgroundPanel = new JPanel(new GridBagLayout());
         backgroundPanel.setBackground(new Color(230, 240, 250));
 
-        // Main panel with CardLayout
+        // Main panel (CardLayout)
         mainPanel = new JPanel();
         cardLayout = new CardLayout();
         mainPanel.setLayout(cardLayout);
 
-        // Create login and signup card panels
-        loginPanel = new CardPanel(false); // Login
-        signUpPanel = new CardPanel(true); // Sign Up
+        // Create login and signup cards
+        loginPanel = new CardPanel(false);
+        signUpPanel = new CardPanel(true);
 
         mainPanel.add(loginPanel, "login");
         mainPanel.add(signUpPanel, "signup");
 
-        // Toggle label at bottom
+        // Toggle label
         toggleLabel = new JLabel("Don't have an account? Sign Up", SwingConstants.CENTER);
         toggleLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         toggleLabel.setForeground(new Color(0, 102, 128));
@@ -58,7 +56,7 @@ public class AuthUi {
 
         frame.setContentPane(backgroundPanel);
 
-        // Toggle panel logic
+        // 🔹 Toggle between Login and Sign Up
         toggleLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -74,54 +72,103 @@ public class AuthUi {
             }
         });
 
-        // Login action
+        // 🔹 Login button action
         loginPanel.submitButton.addActionListener(ev -> {
-            String user = loginPanel.getUsername();
-            String pass = loginPanel.getPassword();
-            LoginService loginService = new LoginService();
-            try {
-                User loggedInUser = loginService.loginService(user, pass);
-                if (loggedInUser != null) {
-                    JOptionPane.showMessageDialog(frame, "Login Successful!");
-                    loginPanel.clearFields();
+            String username = loginPanel.getUsername();
+            String password = loginPanel.getPassword();
 
-                   new UserPanel(loggedInUser);
+            if (username.isEmpty() || password.isEmpty()) {
+                JOptionPane.showMessageDialog(frame, "⚠ Please enter both username and password!");
+                return;
+            }
+
+            try {
+                LoginService loginService = new LoginService();
+                User loggedInUser = loginService.loginService(username, password);
+
+                if (loggedInUser != null) {
+                    JOptionPane.showMessageDialog(frame,
+                        "✅ Login successful! Welcome " + loggedInUser.getUsername());
+
+                    // Get role
+                    String role = loggedInUser.getRole();
+
+                    // Redirect based on role
+                    if (role.equalsIgnoreCase("Chef")) {
+                        new UserPanel(loggedInUser);
+                    }
+                    else if (role.equalsIgnoreCase("Admin")) {
+                        new AdminPanel(loggedInUser);
+                        
+                    }
+                    
+                    else if (role.equalsIgnoreCase("Viewer")) {
+                        new ViewerPanel(loggedInUser);
+                        
+                    }
+                    else {
+                        JOptionPane.showMessageDialog(frame, "⚠ Unknown role: " + role);
+                        return;
+                    }
+
+                    frame.dispose(); // close login window
 
                 } else {
-                    JOptionPane.showMessageDialog(frame, "Invalid username or password!");
+                    JOptionPane.showMessageDialog(frame,
+                        "❌ Invalid username or password!",
+                        "Login Failed", JOptionPane.ERROR_MESSAGE);
                 }
+
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(frame, "Error during login!");
+                JOptionPane.showMessageDialog(frame,
+                    "❌ Error during login: " + ex.getMessage(),
+                    "Error", JOptionPane.ERROR_MESSAGE);
                 ex.printStackTrace();
             }
         });
 
-        // SignUp action
+        // 🔹 Sign Up button action
         signUpPanel.submitButton.addActionListener(ev -> {
             String user = signUpPanel.getUsername();
             String pass = signUpPanel.getPassword();
             String role = signUpPanel.getRole();
-            SignUpService signupService = new SignUpService();
+
+            if (user.isEmpty() || pass.isEmpty() || role.isEmpty()) {
+                JOptionPane.showMessageDialog(frame, "⚠ Please fill all fields!");
+                return;
+            }
+
             try {
+                SignUpService signupService = new SignUpService();
                 boolean success = signupService.signUpService(user, pass, role);
+
                 if (success) {
-                    JOptionPane.showMessageDialog(frame, "Sign Up Successful! Please login.");
+                    JOptionPane.showMessageDialog(frame, "✅ Sign Up Successful! Please login.");
                     signUpPanel.clearFields();
                     cardLayout.show(mainPanel, "login");
                     toggleLabel.setText("Don't have an account? Sign Up");
                 } else {
-                    JOptionPane.showMessageDialog(frame, "Sign Up Failed! Username already exists.");
+                    JOptionPane.showMessageDialog(frame, "❌ Sign Up Failed! Username already exists.");
                 }
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(frame, "Error during Sign Up!");
+                JOptionPane.showMessageDialog(frame,
+                    "❌ Error during Sign Up: " + ex.getMessage(),
+                    "Error", JOptionPane.ERROR_MESSAGE);
+                ex.printStackTrace();
             }
         });
 
+        // Show login by default
         cardLayout.show(mainPanel, "login");
         frame.setVisible(true);
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(AuthUi::new);
-    }
+	public void setVisible(boolean b) {
+		// TODO Auto-generated method stub
+		
+	}
+
+//    public static void main(String[] args) {
+//        SwingUtilities.invokeLater(AuthUi::new);
+//    }
 }

@@ -1,17 +1,21 @@
 package ui.Cook;
-
+import model.*;
+import util.StyleActionBtn;
 import javax.swing.*;
+
+import dao.recipeDao.RecipeTitle;
+import dao.recipeDao.RecipeDAO;
 import java.awt.*;
 import java.awt.event.*;
-
+import java.util.List;
+import ui.Cook.RecipeViewPanel;
 public class ChefProfile extends JFrame implements ActionListener {
 
     private JLabel lblChefName, lblPosition, lblAvatar;
     private JPanel recipeListPanel;
     private JButton btnBack;
 
-    public ChefProfile(String chefName) {
-
+    public ChefProfile(User chef) {
         // ===== Frame Setup =====
         setTitle("Chef Profile");
         setSize(850, 520);
@@ -22,7 +26,7 @@ public class ChefProfile extends JFrame implements ActionListener {
 
         // ===== Header =====
         JPanel headerPanel = new JPanel();
-        headerPanel.setBackground(new Color(255, 140, 0));
+        headerPanel.setBackground(new Color(45, 110, 195));
         JLabel lblHeader = new JLabel("Chef Profile", SwingConstants.CENTER);
         lblHeader.setFont(new Font("Serif", Font.BOLD, 26));
         lblHeader.setForeground(Color.WHITE);
@@ -50,7 +54,7 @@ public class ChefProfile extends JFrame implements ActionListener {
                 .getImage().getScaledInstance(120, 120, Image.SCALE_SMOOTH));
         lblAvatar.setIcon(avatarIcon);
 
-        lblChefName = new JLabel(chefName, SwingConstants.CENTER);
+        lblChefName = new JLabel(chef.getUsername(), SwingConstants.CENTER);
         lblChefName.setFont(new Font("SansSerif", Font.BOLD, 18));
         lblChefName.setAlignmentX(Component.CENTER_ALIGNMENT);
         lblChefName.setBorder(BorderFactory.createEmptyBorder(20, 0, 10, 0));
@@ -94,20 +98,24 @@ public class ChefProfile extends JFrame implements ActionListener {
 
         mainPanel.add(rightPanel, BorderLayout.CENTER);
 
-        // ===== Sample Recipes =====
-        addRecipeEntry("Chocolate Cake");
-        addRecipeEntry("Pasta Alfredo");
-        addRecipeEntry("Grilled Chicken");
-        addRecipeEntry("Paneer Butter Masala");
-        addRecipeEntry("Strawberry Smoothie");
-        addRecipeEntry("Mango Lassi");
-        addRecipeEntry("French Toast");
+       loadRecipes(chef.getId());
 
         setVisible(true);
     }
+    RecipeDAO fetchId = new RecipeDAO();
+    public void loadRecipes(int userId) {
+        try {
+            List<RecipeTitle> recipes = RecipeTitle.getRecipeTitles(userId);
+            for (RecipeTitle r : recipes) {
+                addRecipeEntry(r.getId(),r.getTitle()); // use your helper to add dynamically
+            }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
 
     // ===== Helper: Add Recipe Strip =====
-    private void addRecipeEntry(String recipeName) {
+    private void addRecipeEntry(int recipeId, String recipeName) {
         JPanel recipePanel = new JPanel(new BorderLayout());
         recipePanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 55));
         recipePanel.setBorder(BorderFactory.createCompoundBorder(
@@ -116,22 +124,75 @@ public class ChefProfile extends JFrame implements ActionListener {
         ));
         recipePanel.setBackground(new Color(252, 252, 252));
 
-        JLabel lblRecipe = new JLabel(recipeName);
+        // Recipe name label
+        JLabel lblRecipe = new JLabel("🍲 " + recipeName);
         lblRecipe.setFont(new Font("SansSerif", Font.PLAIN, 16));
 
+        // Buttons
         JButton btnView = new JButton("View");
-        btnView.setActionCommand(recipeName);
-        btnView.addActionListener(this);
-        btnView.setFocusPainted(false);
+        JButton btnDelete = new JButton("Delete");
 
+        // ✅ Action Listeners
+        btnView.addActionListener(ev -> {
+            try {
+                Recipe recipe = fetchId.getRecipeById(recipeId);
+                if (recipe != null) {
+                    new RecipeViewPanel(recipeId);
+                } else {
+                    JOptionPane.showMessageDialog(this, "Recipe details not found.");
+                }
+            } catch (ClassNotFoundException ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Error loading recipe details.");
+            }
+        });
+
+        btnDelete.addActionListener(ev -> {
+            int confirm = JOptionPane.showConfirmDialog(
+                    this,
+                    "Are you sure you want to delete \"" + recipeName + "\"?",
+                    "Confirm Delete",
+                    JOptionPane.YES_NO_OPTION
+            );
+            if (confirm == JOptionPane.YES_OPTION) {
+                try {
+                    RecipeDAO dao = new RecipeDAO();
+                    dao.deleteRecipe(recipeId);
+                    recipeListPanel.remove(recipePanel);
+                    recipeListPanel.revalidate();
+                    recipeListPanel.repaint();
+                    JOptionPane.showMessageDialog(this, "Recipe deleted successfully.");
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(this, "Error deleting recipe.");
+                }
+            }
+        });
+
+        // ✅ Button Panel
+        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        btnPanel.setOpaque(false);
+        
+        StyleActionBtn.styleActionButton(btnView, new Color(46, 204, 113));
+
+     
+        StyleActionBtn.styleActionButton(btnDelete, new Color(231, 76, 60));
+        btnPanel.add(btnView);
+        btnPanel.add(btnDelete);
+
+        // ✅ Add components properly
         recipePanel.add(lblRecipe, BorderLayout.WEST);
-        recipePanel.add(btnView, BorderLayout.EAST);
+        recipePanel.add(btnPanel, BorderLayout.EAST);
 
+        // Add to recipe list
         recipeListPanel.add(recipePanel);
-        recipeListPanel.add(Box.createRigidArea(new Dimension(0, 8))); // spacing
+        recipeListPanel.add(Box.createRigidArea(new Dimension(0, 8)));
     }
 
-    // ===== Event Handling =====
+ 
+   
+
+	// ===== Event Handling =====
     @Override
     public void actionPerformed(ActionEvent e) {
         String cmd = e.getActionCommand();
@@ -145,7 +206,5 @@ public class ChefProfile extends JFrame implements ActionListener {
     }
 
     // ===== Test Run =====
-    public static void main(String[] args) {
-        new ChefProfile("Chef Ramesh");
-    }
+   
 }
