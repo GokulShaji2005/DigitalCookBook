@@ -1,15 +1,16 @@
+
 package ui.auth;
 
 import ui.admin.AdminPanel;
 import ui.Cook.UserPanel;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import services.LoginService;
 import services.SignUpService;
 import model.User;
 import ui.viewer.*;
+
 public class AuthUi {
     JFrame frame;
     JPanel mainPanel;
@@ -56,7 +57,7 @@ public class AuthUi {
 
         frame.setContentPane(backgroundPanel);
 
-        // 🔹 Toggle between Login and Sign Up
+        // 🔹 Toggle between Login and Sign Up (MouseAdapter replaced with anonymous class)
         toggleLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -72,89 +73,87 @@ public class AuthUi {
             }
         });
 
-        // 🔹 Login button action
-        loginPanel.submitButton.addActionListener(ev -> {
-            String username = loginPanel.getUsername();
-            String password = loginPanel.getPassword();
+        // 🔹 Login button action (replaced lambda with ActionListener)
+        loginPanel.submitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                String username = loginPanel.getUsername();
+                String password = loginPanel.getPassword();
 
-            if (username.isEmpty() || password.isEmpty()) {
-                JOptionPane.showMessageDialog(frame, "⚠ Please enter both username and password!");
-                return;
-            }
-
-            try {
-                LoginService loginService = new LoginService();
-                User loggedInUser = loginService.loginService(username, password);
-
-                if (loggedInUser != null) {
-                    JOptionPane.showMessageDialog(frame,
-                        "✅ Login successful! Welcome " + loggedInUser.getUsername());
-
-                    // Get role
-                    String role = loggedInUser.getRole();
-
-                    // Redirect based on role
-                    if (role.equalsIgnoreCase("Chef")) {
-                        new UserPanel(loggedInUser);
-                    }
-                    else if (role.equalsIgnoreCase("Admin")) {
-                        new AdminPanel(loggedInUser);
-                        
-                    }
-                    
-                    else if (role.equalsIgnoreCase("Viewer")) {
-                        new ViewerPanel(loggedInUser);
-                        
-                    }
-                    else {
-                        JOptionPane.showMessageDialog(frame, "⚠ Unknown role: " + role);
-                        return;
-                    }
-
-                    frame.dispose(); // close login window
-
-                } else {
-                    JOptionPane.showMessageDialog(frame,
-                        "❌ Invalid username or password!",
-                        "Login Failed", JOptionPane.ERROR_MESSAGE);
+                if (username.isEmpty() || password.isEmpty()) {
+                    JOptionPane.showMessageDialog(frame, "⚠ Please enter both username and password!");
+                    return;
                 }
 
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(frame,
-                    "❌ Error during login: " + ex.getMessage(),
-                    "Error", JOptionPane.ERROR_MESSAGE);
-                ex.printStackTrace();
+                try {
+                    LoginService loginService = new LoginService();
+                    User loggedInUser = loginService.loginService(username, password);
+
+                    if (loggedInUser != null) {
+                        JOptionPane.showMessageDialog(frame,
+                                "✅ Login successful! Welcome " + loggedInUser.getUsername());
+
+                        String role = loggedInUser.getRole();
+
+                        if (role.equalsIgnoreCase("Chef")) {
+                            new UserPanel(loggedInUser);
+                        } else if (role.equalsIgnoreCase("Admin")) {
+                            new AdminPanel(loggedInUser);
+                        } else if (role.equalsIgnoreCase("Viewer")) {
+                            new ViewerPanel(loggedInUser);
+                        } else {
+                            JOptionPane.showMessageDialog(frame, "⚠ Unknown role: " + role);
+                            return;
+                        }
+
+                        frame.dispose();
+
+                    } else {
+                        JOptionPane.showMessageDialog(frame,
+                                "❌ Invalid username or password!",
+                                "Login Failed", JOptionPane.ERROR_MESSAGE);
+                    }
+
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(frame,
+                            "❌ Error during login: " + ex.getMessage(),
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                    ex.printStackTrace();
+                }
             }
         });
 
-        // 🔹 Sign Up button action
-        signUpPanel.submitButton.addActionListener(ev -> {
-            String user = signUpPanel.getUsername();
-            String pass = signUpPanel.getPassword();
-            String role = signUpPanel.getRole();
+        // 🔹 Sign Up button action (replaced lambda with ActionListener)
+        signUpPanel.submitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                String user = signUpPanel.getUsername();
+                String pass = signUpPanel.getPassword();
+                String role = signUpPanel.getRole();
 
-            if (user.isEmpty() || pass.isEmpty() || role.isEmpty()) {
-                JOptionPane.showMessageDialog(frame, "⚠ Please fill all fields!");
-                return;
-            }
-
-            try {
-                SignUpService signupService = new SignUpService();
-                boolean success = signupService.signUpService(user, pass, role);
-
-                if (success) {
-                    JOptionPane.showMessageDialog(frame, "✅ Sign Up Successful! Please login.");
-                    signUpPanel.clearFields();
-                    cardLayout.show(mainPanel, "login");
-                    toggleLabel.setText("Don't have an account? Sign Up");
-                } else {
-                    JOptionPane.showMessageDialog(frame, "❌ Sign Up Failed! Username already exists.");
+                if (user.isEmpty() || pass.isEmpty() || role.isEmpty()) {
+                    JOptionPane.showMessageDialog(frame, "⚠ Please fill all fields!");
+                    return;
                 }
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(frame,
-                    "❌ Error during Sign Up: " + ex.getMessage(),
-                    "Error", JOptionPane.ERROR_MESSAGE);
-                ex.printStackTrace();
+
+                try {
+                    SignUpService signupService = new SignUpService();
+                    boolean success = signupService.signUpService(user, pass, role);
+
+                    if (success) {
+                        JOptionPane.showMessageDialog(frame, "✅ Sign Up Successful! Please login.");
+                        signUpPanel.clearFields();
+                        cardLayout.show(mainPanel, "login");
+                        toggleLabel.setText("Don't have an account? Sign Up");
+                    } else {
+                        JOptionPane.showMessageDialog(frame, "❌ Sign Up Failed! Username already exists.");
+                    }
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(frame,
+                            "❌ Error during Sign Up: " + ex.getMessage(),
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                    ex.printStackTrace();
+                }
             }
         });
 
@@ -163,10 +162,7 @@ public class AuthUi {
         frame.setVisible(true);
     }
 
-	public void setVisible(boolean b) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
+    public void setVisible(boolean b) {
+        frame.setVisible(b);
+    }
 }

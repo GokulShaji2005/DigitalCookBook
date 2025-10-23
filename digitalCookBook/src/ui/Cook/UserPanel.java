@@ -1,23 +1,22 @@
+
 package ui.Cook;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import model.User;
 import util.LogoutAction;
-import ui.auth.AuthUi;
 
 public class UserPanel {
     private JFrame frame;
     private JPanel mainContent;
     private CardLayout cardLayout;
     public User loggedInUser;  
-    public UserPanel(User loggedInUser) {
-    	// username/password from form
 
-    	 this.loggedInUser = loggedInUser; 
-    	
-   
-    
+    public UserPanel(User loggedInUser) {
+        this.loggedInUser = loggedInUser; 
+
         frame = new JFrame("Recipe Manager Dashboard");
         frame.setSize(1000, 650);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -48,16 +47,12 @@ public class UserPanel {
         sideMenu.setPreferredSize(new Dimension(200, 0));
         sideMenu.setBorder(BorderFactory.createEmptyBorder(20, 10, 10, 10));
 
-//        JButton btnDashboard = createMenuButton("Dashboard");
         JButton btnRecipes = createMenuButton("Recipes");
-//        JButton btnOthers = createMenuButton("Others");
         JButton btnLogout = createMenuButton("Logout");
 
-//        sideMenu.add(btnDashboard);
         sideMenu.add(Box.createVerticalStrut(10));
         sideMenu.add(btnRecipes);
         sideMenu.add(Box.createVerticalStrut(10));
-//        sideMenu.add(btnOthers);
         sideMenu.add(Box.createVerticalGlue());
         sideMenu.add(btnLogout);
 
@@ -67,32 +62,35 @@ public class UserPanel {
         cardLayout = new CardLayout();
         mainContent = new JPanel(cardLayout);
 
-        // Placeholder panels
-//        JPanel dashboardPanel = createPagePanel("Dashboard Content");
-        
-//        User loggedInUser = loginService.loginService(username);
-
-        RecipiePanel recipePanel = new RecipiePanel(loggedInUser.getId()); // use custom panel
+        // Custom Panels
+        RecipiePanel recipePanel = new RecipiePanel(loggedInUser.getId());
         JPanel othersPanel = createPagePanel("Coming Soon...");
 
-//        mainContent.add(dashboardPanel, "Dashboard");
         mainContent.add(recipePanel, "Recipes");
         mainContent.add(othersPanel, "Others");
-//        mainContent.add(btnLogout, "Logout");
+
         frame.add(mainContent, BorderLayout.CENTER);
 
-        // 🔹 Button Navigation
-//        btnDashboard.addActionListener(e -> cardLayout.show(mainContent, "Dashboard"));
-        btnRecipes.addActionListener(e -> cardLayout.show(mainContent, "Recipes"));
-//        btnOthers.addActionListener(e -> cardLayout.show(mainContent, "Others"));
-        btnLogout.addActionListener(e -> LogoutAction.performLogout(frame));
+        // 🔹 Button Navigation with traditional ActionListener
+        btnRecipes.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(mainContent, "Recipes");
+            }
+        });
 
+        btnLogout.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                LogoutAction.performLogout(frame);
+            }
+        });
 
         frame.setVisible(true);
     }
 
-    private JButton createMenuButton(String text) {
-        JButton button = new JButton(text);
+    private JButton createMenuButton(final String text) {
+        final JButton button = new JButton(text);
         button.setMaximumSize(new Dimension(180, 45));
         button.setAlignmentX(Component.CENTER_ALIGNMENT);
         button.setFocusPainted(false);
@@ -102,11 +100,11 @@ public class UserPanel {
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
         button.setBorder(BorderFactory.createEmptyBorder(8, 12, 8, 12));
 
+        // Traditional MouseAdapter
         button.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 button.setBackground(new Color(80, 140, 220));
             }
-
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 button.setBackground(new Color(60, 120, 200));
             }
@@ -123,6 +121,5 @@ public class UserPanel {
         panel.add(label, BorderLayout.CENTER);
         return panel;
     }
-
-  
 }
+

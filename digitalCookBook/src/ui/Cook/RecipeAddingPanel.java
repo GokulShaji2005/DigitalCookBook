@@ -6,24 +6,22 @@ import model.Recipe;
 
 import javax.swing.*;
 import java.awt.*;
-import ui.Cook.RecipiePanel;
+
 public class RecipeAddingPanel extends JPanel {
 
-public Runnable recipeAddedListener;
-//    private int userId; // ✅ store user ID for saving recipes
-	protected JTextField nameField;
+    public Runnable recipeAddedListener;
+    protected JTextField nameField;
     protected JTextField categoryField;
     protected JTextArea ingredientsArea;
     protected JTextArea stepsArea;
     protected JButton saveButton;
     protected int userId;
+
     public void setRecipeAddedListener(Runnable listener) {
         this.recipeAddedListener = listener;
     }
 
     public RecipeAddingPanel(int userId) {
-//    	RecipiePanel recipieLoader=new RecipiePanel(); 
-    	
         this.userId = userId;
         setLayout(new BorderLayout());
         setBackground(new Color(245, 247, 250));
@@ -63,36 +61,15 @@ public Runnable recipeAddedListener;
         styleTextArea(ingredientsArea);
         JScrollPane ingredientScroll = new JScrollPane(ingredientsArea);
         ingredientScroll.setBorder(BorderFactory.createEmptyBorder());
-//        JLabel imageLabel = createLabel("Image:");
-////    imagePreview = new JLabel("No Image", SwingConstants.CENTER);
-////    imagePreview.setOpaque(true);
-////    imagePreview.setBackground(new Color(230, 230, 230));
-////    imagePreview.setPreferredSize(new Dimension(200, 200));
-////    imagePreview.setMaximumSize(new Dimension(120, 120));
-////    imagePreview.setMinimumSize(new Dimension(120, 120));
-////    imagePreview.setBorder(BorderFactory.createLineBorder(new Color(180, 180, 180)));
-////    imagePreview.setHorizontalAlignment(SwingConstants.CENTER);
-////    imagePreview.setVerticalAlignment(SwingConstants.CENTER);
-////    imagePreview.setIconTextGap(0);
-////
-////
-////
-////    JButton uploadButton = new JButton("Upload Image");
-////    stylePrimaryButton(uploadButton);
-////    uploadButton.setAlignmentX(Component.LEFT_ALIGNMENT);
-////
-////    uploadButton.addActionListener(e -> chooseImage());
-//
+
         leftPanel.add(nameLabel);
         leftPanel.add(Box.createVerticalStrut(5));
         leftPanel.add(nameField);
         leftPanel.add(Box.createVerticalStrut(10));
-
         leftPanel.add(categoryLabel);
         leftPanel.add(Box.createVerticalStrut(5));
         leftPanel.add(categoryField);
         leftPanel.add(Box.createVerticalStrut(10));
-
         leftPanel.add(ingredientsLabel);
         leftPanel.add(Box.createVerticalStrut(5));
         leftPanel.add(ingredientScroll);
@@ -119,23 +96,10 @@ public Runnable recipeAddedListener;
         cardPanel.add(contentPanel, BorderLayout.CENTER);
 
         // === BOTTOM BUTTONS ===
-//        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 10));
-//        bottomPanel.setBackground(Color.WHITE);
-//
-//         saveButton = new JButton("💾 Save Recipe");
-//        JButton cancelButton = new JButton("Cancel");
-//        stylePrimaryButton(saveButton);
-//        styleSecondaryButton(cancelButton);
-//
-//        bottomPanel.add(cancelButton);
-//        bottomPanel.add(saveButton);
-//        cardPanel.add(bottomPanel, BorderLayout.SOUTH);
-        
-     // === BOTTOM BUTTONS ===
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 10));
         bottomPanel.setBackground(Color.WHITE);
 
-        saveButton = new JButton("💾 Save Recipe"); // ✅ FIXED: removed 'JButton' to use class variable
+        saveButton = new JButton("💾 Save Recipe");
         JButton cancelButton = new JButton("Cancel");
         stylePrimaryButton(saveButton);
         styleSecondaryButton(cancelButton);
@@ -144,79 +108,28 @@ public Runnable recipeAddedListener;
         bottomPanel.add(saveButton);
         cardPanel.add(bottomPanel, BorderLayout.SOUTH);
 
-
         add(cardPanel, BorderLayout.CENTER);
 
-        // ✅ Add action for SAVE button
-        saveButton.addActionListener(e -> {
-            saveRecipe();
-            JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
-            if (frame != null) {
-                frame.dispose(); // closes the window
+        // ✅ Add traditional ActionListener for SAVE button
+        saveButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                saveRecipe();
+                JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(RecipeAddingPanel.this);
+                if (frame != null) frame.dispose();
             }
-         
-        });
-        
-        cancelButton.addActionListener(e ->{
-        	 JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
-             if (frame != null) {
-                 frame.dispose(); // closes the window
-             }
         });
 
-
-        // Cancel button can go back or clear fields
-        cancelButton.addActionListener(e -> clearFields());
+        // Cancel button closes window
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(RecipeAddingPanel.this);
+                if (frame != null) frame.dispose();
+            }
+        });
     }
-////private void chooseImage() {
-////JFileChooser fileChooser = new JFileChooser();
-////fileChooser.setDialogTitle("Select Recipe Image");
-////fileChooser.setFileFilter(new FileNameExtensionFilter("Image Files", "jpg", "png", "jpeg"));
-////
-////int result = fileChooser.showOpenDialog(this);
-////if (result == JFileChooser.APPROVE_OPTION) {
-////    selectedImage = fileChooser.getSelectedFile();
-////    ImageIcon icon = new ImageIcon(selectedImage.getAbsolutePath());
-////    Image img = icon.getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH);
-////    imagePreview.setText("");
-////    imagePreview.setIcon(new ImageIcon(img));
-////}
-////}
-////private void chooseImage() {
-////JFileChooser fileChooser = new JFileChooser();
-////fileChooser.setDialogTitle("Select Recipe Image");
-////fileChooser.setFileFilter(new FileNameExtensionFilter("Image Files", "jpg", "png", "jpeg"));
-////
-////int result = fileChooser.showOpenDialog(this);
-////if (result == JFileChooser.APPROVE_OPTION) {
-////    selectedImage = fileChooser.getSelectedFile();
-////    ImageIcon icon = new ImageIcon(selectedImage.getAbsolutePath());
-////
-////    // Get the size of the preview box
-////    int boxWidth = 120;
-////    int boxHeight = 120;
-////
-////    // Calculate scaling factor to fit within the box
-////    Image img = icon.getImage();
-////    double widthRatio = (double) boxWidth / img.getWidth(null);
-////    double heightRatio = (double) boxHeight / img.getHeight(null);
-////    double scale = Math.min(widthRatio, heightRatio);
-////
-////    int newWidth = (int) (img.getWidth(null) * scale);
-////    int newHeight = (int) (img.getHeight(null) * scale);
-////
-////    Image scaledImg = img.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
-////
-////    imagePreview.setText("");
-////    imagePreview.setIcon(new ImageIcon(scaledImg));
-////    imagePreview.setHorizontalAlignment(SwingConstants.CENTER);
-////    imagePreview.setVerticalAlignment(SwingConstants.CENTER);
-////    imagePreview.revalidate();
-////    imagePreview.repaint();
-////}
-////}
 
-    // --- Save Recipe Logic ---
     private void saveRecipe() {
         String name = nameField.getText().trim();
         String category = categoryField.getText().trim();
@@ -238,14 +151,9 @@ public Runnable recipeAddedListener;
         try {
             RecipeDAO dao = new RecipeDAO();
             dao.addRecipe(recipe);
-
             JOptionPane.showMessageDialog(this, "✅ Recipe added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
             clearFields();
-            
-            // ✅ Notify parent to reload recipes
-            if (recipeAddedListener != null) {
-                recipeAddedListener.run();
-            }
+            if (recipeAddedListener != null) recipeAddedListener.run();
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "❌ Error saving recipe: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             ex.printStackTrace();
@@ -259,7 +167,6 @@ public Runnable recipeAddedListener;
         stepsArea.setText("");
     }
 
-    // --- UI Helpers ---
     private JLabel createLabel(String text) {
         JLabel label = new JLabel(text);
         label.setFont(new Font("Segoe UI", Font.PLAIN, 16));
@@ -307,9 +214,4 @@ public Runnable recipeAddedListener;
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
         button.setBorder(BorderFactory.createEmptyBorder(8, 16, 8, 16));
     }
-
-	
-
-   
 }
-

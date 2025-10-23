@@ -1,11 +1,12 @@
 
-
 package ui.Cook;
 
 import javax.swing.*;
 import dao.recipeDao.RecipeDAO;
 import model.Recipe;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class RecipeViewPanel extends JFrame {
     private Recipe recipe;
@@ -40,7 +41,7 @@ public class RecipeViewPanel extends JFrame {
                 BorderFactory.createEmptyBorder(20, 20, 20, 20)
         ));
         cardPanel.setBackground(Color.WHITE);
-        cardPanel.setPreferredSize(new Dimension(850, 550)); // ✅ nice consistent size
+        cardPanel.setPreferredSize(new Dimension(850, 550));
 
         // --- Top: Title ---
         JLabel titleLabel = new JLabel(recipe.getTitle(), SwingConstants.CENTER);
@@ -173,8 +174,13 @@ public class RecipeViewPanel extends JFrame {
 
         add(wrapperPanel, BorderLayout.CENTER);
 
-        // --- Back Button Action ---
-        backButton.addActionListener(e -> dispose());
+        // --- Back Button Action (traditional) ---
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+            }
+        });
 
         setVisible(true);
     }

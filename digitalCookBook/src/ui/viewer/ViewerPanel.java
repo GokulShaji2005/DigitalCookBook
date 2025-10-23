@@ -1,45 +1,48 @@
 
-package ui.admin;
+
+package ui.viewer;
 
 import javax.swing.*;
-import model.User;
-import ui.auth.AuthUi;
-import util.LogoutAction;
 import java.awt.*;
 import java.awt.event.*;
 
-public class AdminPanel {
+import model.User;
+import util.LogoutAction;
+
+public class ViewerPanel {
     private JFrame frame;
     private JPanel mainContent;
     private CardLayout cardLayout;
-    private boolean showDelete;
-    public User loggedInUser;
+    private User loggedInUser;
 
-    public AdminPanel(User loggedInUser) {
+    private RecipeList recipeListPanel;
+    private Favourites favouritesPanel;
 
+    public ViewerPanel(User loggedInUser) {
         this.loggedInUser = loggedInUser;
-        frame = new JFrame("Recipe Manager - Admin Dashboard");
+
+        // Initialize favourites first, then RecipeList with reference
+        favouritesPanel = new Favourites(loggedInUser);
+        recipeListPanel = new RecipeList(loggedInUser, favouritesPanel);
+
+        // JFrame setup
+        frame = new JFrame("Recipe Manager - Viewer Dashboard");
         frame.setSize(1000, 650);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
         frame.setLayout(new BorderLayout());
 
-        // === Top Bar ===
-        JPanel topBar = createTopBar();
-        frame.add(topBar, BorderLayout.NORTH);
+        // Top bar and side menu
+        frame.add(createTopBar(), BorderLayout.NORTH);
+        frame.add(createSideMenu(), BorderLayout.WEST);
 
-        // === Side Menu ===
-        JPanel sideMenu = createSideMenu();
-        frame.add(sideMenu, BorderLayout.WEST);
-
-        // === Main Content Area ===
+        // Main content
         cardLayout = new CardLayout();
         mainContent = new JPanel(cardLayout);
-
-        // Add panels
-        boolean showDelete = true;
-        mainContent.add(new UserListpanel(cardLayout, mainContent, showDelete), "UsersPanel");
-        mainContent.add(new ViewerList(cardLayout, mainContent), "Viewers");
+        mainContent.add(recipeListPanel, "Recipe");
+        mainContent.add(favouritesPanel, "Favourites");
+        mainContent.add(new ChefList(cardLayout, createSideMenu()), "ChefList");
+        mainContent.add(new ViewerList(cardLayout, mainContent), "ViewerPanel");
 
         frame.add(mainContent, BorderLayout.CENTER);
         frame.setVisible(true);
@@ -54,13 +57,12 @@ public class AdminPanel {
         projectLabel.setForeground(Color.WHITE);
         projectLabel.setFont(new Font("Segoe UI", Font.BOLD, 22));
 
-        JLabel welcomeLabel = new JLabel("Welcome, Admin");
+        JLabel welcomeLabel = new JLabel("Welcome, " + loggedInUser.getUsername());
         welcomeLabel.setForeground(Color.WHITE);
         welcomeLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
 
         topBar.add(projectLabel, BorderLayout.WEST);
         topBar.add(welcomeLabel, BorderLayout.EAST);
-
         return topBar;
     }
 
@@ -71,22 +73,31 @@ public class AdminPanel {
         sideMenu.setPreferredSize(new Dimension(200, 0));
         sideMenu.setBorder(BorderFactory.createEmptyBorder(20, 10, 10, 10));
 
+        JButton btnRecipes = createMenuButton("Recipes");
         JButton btnUsers = createMenuButton("Chefs");
-        JButton btnViewers = createMenuButton("Viewers");
+        JButton btnFav = createMenuButton("Favourites");
         JButton btnLogout = createMenuButton("Logout");
 
-        // === Traditional ActionListeners (no lambdas) ===
-        btnUsers.addActionListener(new ActionListener() {
+        // Switch panels using anonymous inner classes
+        btnRecipes.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                cardLayout.show(mainContent, "UsersPanel");
+                cardLayout.show(mainContent, "Recipe");
             }
         });
 
-        btnViewers.addActionListener(new ActionListener() {
+        btnFav.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                cardLayout.show(mainContent, "Viewers");
+                favouritesPanel.loadFavouriteRecipes(); // refresh favourites
+                cardLayout.show(mainContent, "Favourites");
+            }
+        });
+
+        btnUsers.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(mainContent, "ChefList");
             }
         });
 
@@ -97,10 +108,11 @@ public class AdminPanel {
             }
         });
 
+        sideMenu.add(btnRecipes);
         sideMenu.add(Box.createVerticalStrut(10));
         sideMenu.add(btnUsers);
         sideMenu.add(Box.createVerticalStrut(10));
-        sideMenu.add(btnViewers);
+        sideMenu.add(btnFav);
         sideMenu.add(Box.createVerticalGlue());
         sideMenu.add(btnLogout);
 
@@ -119,10 +131,18 @@ public class AdminPanel {
         btn.setBorder(BorderFactory.createEmptyBorder(8, 12, 8, 12));
 
         btn.addMouseListener(new MouseAdapter() {
-            public void mouseEntered(MouseEvent e) { btn.setBackground(new Color(80, 140, 220)); }
-            public void mouseExited(MouseEvent e) { btn.setBackground(new Color(60, 120, 200)); }
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btn.setBackground(new Color(80, 140, 220));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btn.setBackground(new Color(60, 120, 200));
+            }
         });
         return btn;
     }
 }
+
 

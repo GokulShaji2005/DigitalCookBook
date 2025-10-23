@@ -1,3 +1,4 @@
+
 package ui.Cook;
 
 import dao.recipeDao.RecipeDAO;
@@ -5,6 +6,8 @@ import model.Recipe;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class RecipeEditingPanel extends RecipeAddingPanel {
     private int recipeId;
@@ -19,9 +22,16 @@ public class RecipeEditingPanel extends RecipeAddingPanel {
         headerLabel.setText("✏️ Edit Recipe");
         saveButton.setText("💾 Update Recipe");
 
-        // Remove parent's save action and add update
+        // Remove parent's save action
         for (var l : saveButton.getActionListeners()) saveButton.removeActionListener(l);
-        saveButton.addActionListener(e -> updateRecipe());
+
+        // ✅ Add traditional ActionListener instead of lambda
+        saveButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                updateRecipe();
+            }
+        });
 
         loadRecipeDetails();
     }
@@ -74,3 +84,4 @@ public class RecipeEditingPanel extends RecipeAddingPanel {
         }
     }
 }
+

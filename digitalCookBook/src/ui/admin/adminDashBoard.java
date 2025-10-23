@@ -1,5 +1,4 @@
 
-//}
 package ui.admin;
 
 import javax.swing.*;
@@ -45,3 +44,4 @@ public class AdminDashBoard extends JPanel {
         return card;
     }
 }
+
