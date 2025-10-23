@@ -66,5 +66,31 @@ public class RecipeTitle {
         return list;
     }
 
+
+
     
+
+public static List<RecipeTitle> getRecipesByIds(List<Integer> ids) throws ClassNotFoundException, SQLException {
+ List<RecipeTitle> list = new ArrayList<>();
+ if (ids == null || ids.isEmpty()) return list;
+
+ String placeholders = String.join(",", ids.stream().map(i -> "?").toArray(String[]::new));
+ String sql = "SELECT recipe_id, title FROM recipe WHERE recipe_id IN (" + placeholders + ")";
+
+ try (Connection conn = DBConnection.getConnection();
+      PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+     for (int i = 0; i < ids.size(); i++) {
+         stmt.setInt(i + 1, ids.get(i));
+     }
+
+     ResultSet rs = stmt.executeQuery();
+     while (rs.next()) {
+         list.add(new RecipeTitle(rs.getInt("recipe_id"), rs.getString("title")));
+     }
+ }
+ return list;
 }
+
+}
+

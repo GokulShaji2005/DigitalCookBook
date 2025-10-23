@@ -105,9 +105,9 @@ public class RecipeDAO {
     }
 
 
-    // ✅ Update a recipe
+    
     public void updateRecipe(Recipe recipe) throws ClassNotFoundException {
-        String sql = "UPDATE recipe SET title=?, ingredients=?, instructions=?, category=? WHERE recipe_id=?";
+        String sql = "UPDATE recipe SET title=?, ingredients=?, instructions=?, category=?, user_id=? WHERE recipe_id=?";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -116,15 +116,18 @@ public class RecipeDAO {
             stmt.setString(2, recipe.getIngredients());
             stmt.setString(3, recipe.getInstructions());
             stmt.setString(4, recipe.getCategory());
-            stmt.setInt(5, recipe.getRecipe_Id());
+            stmt.setInt(5, recipe.getUser_id());       // <-- add user_id
+            stmt.setInt(6, recipe.getRecipe_Id());     // recipe_id in WHERE clause
 
             int rows = stmt.executeUpdate();
             System.out.println("✅ " + rows + " recipe(s) updated.");
 
         } catch (SQLException e) {
             System.err.println("❌ Error updating recipe: " + e.getMessage());
+            e.printStackTrace();
         }
     }
+
 
     // ✅ Delete a recipe by ID
     public void deleteRecipe(int id) throws ClassNotFoundException {
