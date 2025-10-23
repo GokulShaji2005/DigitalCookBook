@@ -18,6 +18,8 @@ import java.util.List;
 import dao.recipeDao.RecipeDAO;
 import dao.recipeDao.RecipeTitle;
 import model.User;
+import ui.Cook.RecipeAddingPanel;
+
 
 public class RecipiePanel extends JPanel {
 int userId;
@@ -41,16 +43,65 @@ int userId;
         JLabel titleLabel = new JLabel("Your Recipes");
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 20));
 
+//        addRecipeButton = new JButton("➕ Add Recipe");
+//        stylePrimaryButton(addRecipeButton);
+//        RecipeAddingPanel addPanel = new RecipeAddingPanel(userId);
+//        addRecipeButton.addActionListener(e -> {
+//        	   addPanel.setRecipeAddedListener(() -> {  // set listener
+//                   loadRecipes(); // reload recipes in RecipiePanel
+//                   addFrame.dispose();
+//        	JFrame addFrame = new JFrame("Add Recipe");
+//            addFrame.setSize(1000, 600); // adjust size
+//            addFrame.setLocationRelativeTo(null);
+//            addFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // close only this frame
+//            addFrame.setContentPane(new RecipeAddingPanel(userId));
+//           // create panel
+//          
+//         
+//            addFrame.setVisible(true);
+//        });
+        
         addRecipeButton = new JButton("➕ Add Recipe");
         stylePrimaryButton(addRecipeButton);
+
+//        addRecipeButton.addActionListener(e -> {
+//            // Create the panel and set the listener first
+//            RecipeAddingPanel addPanel = new RecipeAddingPanel(userId);
+//            addPanel.setRecipeAddedListener(() -> {
+//                clearRecipes();   // optional: clear old list
+//                loadRecipes();    // reload recipes
+//            });
+//
+//            // Create the frame and set the panel
+//            JFrame addFrame = new JFrame("Add Recipe");
+//            addFrame.setSize(1000, 600);
+//            addFrame.setLocationRelativeTo(null);
+//            addFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+//            addFrame.setContentPane(addPanel);
+//            addFrame.setVisible(true);
+//        });
+//        
         addRecipeButton.addActionListener(e -> {
-        	JFrame addFrame = new JFrame("Add Recipe");
-            addFrame.setSize(1000, 600); // adjust size
+            // Create Add Panel
+            RecipeAddingPanel addPanel = new RecipeAddingPanel(userId);
+
+            // Set the listener to reload recipes
+            addPanel.setRecipeAddedListener(() -> {
+                clearRecipes();   // remove old recipe cards
+                loadRecipes();    // reload updated recipes
+            });
+
+            // Open a new frame
+            JFrame addFrame = new JFrame("Add Recipe");
+            addFrame.setSize(1000, 600);
             addFrame.setLocationRelativeTo(null);
-            addFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // close only this frame
-            addFrame.setContentPane(new RecipeAddingPanel(userId)); // set your panel
+            addFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            addFrame.setContentPane(addPanel);
             addFrame.setVisible(true);
         });
+
+        
+
 
         topPanel.add(titleLabel, BorderLayout.WEST);
         topPanel.add(addRecipeButton, BorderLayout.EAST);
@@ -114,6 +165,15 @@ int userId;
         viewBtn.addActionListener(e -> {
         	  new RecipeViewPanel(recipeId);
         });
+        editBtn.addActionListener(e -> {
+            JFrame frame = new JFrame("Edit Recipe");
+            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            frame.setSize(800, 600);
+            frame.setLocationRelativeTo(null);
+            frame.setContentPane(new RecipeEditingPanel(recipeId, userId));
+            frame.setVisible(true);
+        });
+
 
 
 
@@ -147,7 +207,9 @@ int userId;
         btnPanel.add(viewBtn);
         btnPanel.add(editBtn);
         btnPanel.add(deleteBtn);
-
+        util.StyleActionBtn.styleActionButton(viewBtn, new Color(46, 204, 113));
+        util.StyleActionBtn.styleActionButton(editBtn, new Color(52, 152, 219));
+        util.StyleActionBtn.styleActionButton(deleteBtn, new Color(231, 76, 60));
         card.add(nameLabel, BorderLayout.WEST);
         card.add(btnPanel, BorderLayout.EAST);
 
@@ -179,18 +241,6 @@ int userId;
         recipeListPanel.revalidate();
         recipeListPanel.repaint();
     }
-//    public static void main(String[] args) {
-//        SwingUtilities.invokeLater(() -> {
-//            JFrame frame = new JFrame("Test Recipe Panel");
-//            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//            frame.setSize(500, 500);
-//            frame.setLocationRelativeTo(null);
-////            LoginService loginId=new LoginService();
-//            RecipiePanel panel = new RecipiePanel(loginId);
-//            frame.setContentPane(panel);
-//
-//            frame.setVisible(true);
-//        });
-//    }
+
 
 }

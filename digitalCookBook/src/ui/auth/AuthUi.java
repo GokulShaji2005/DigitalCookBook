@@ -168,7 +168,5 @@ public class AuthUi {
 		
 	}
 
-//    public static void main(String[] args) {
-//        SwingUtilities.invokeLater(AuthUi::new);
-//    }
+
 }

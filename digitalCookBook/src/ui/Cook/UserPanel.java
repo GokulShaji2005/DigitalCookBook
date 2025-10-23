@@ -48,16 +48,16 @@ public class UserPanel {
         sideMenu.setPreferredSize(new Dimension(200, 0));
         sideMenu.setBorder(BorderFactory.createEmptyBorder(20, 10, 10, 10));
 
-        JButton btnDashboard = createMenuButton("Dashboard");
+//        JButton btnDashboard = createMenuButton("Dashboard");
         JButton btnRecipes = createMenuButton("Recipes");
-        JButton btnOthers = createMenuButton("Others");
+//        JButton btnOthers = createMenuButton("Others");
         JButton btnLogout = createMenuButton("Logout");
 
-        sideMenu.add(btnDashboard);
+//        sideMenu.add(btnDashboard);
         sideMenu.add(Box.createVerticalStrut(10));
         sideMenu.add(btnRecipes);
         sideMenu.add(Box.createVerticalStrut(10));
-        sideMenu.add(btnOthers);
+//        sideMenu.add(btnOthers);
         sideMenu.add(Box.createVerticalGlue());
         sideMenu.add(btnLogout);
 
@@ -68,23 +68,23 @@ public class UserPanel {
         mainContent = new JPanel(cardLayout);
 
         // Placeholder panels
-        JPanel dashboardPanel = createPagePanel("Dashboard Content");
+//        JPanel dashboardPanel = createPagePanel("Dashboard Content");
         
 //        User loggedInUser = loginService.loginService(username);
 
         RecipiePanel recipePanel = new RecipiePanel(loggedInUser.getId()); // use custom panel
         JPanel othersPanel = createPagePanel("Coming Soon...");
 
-        mainContent.add(dashboardPanel, "Dashboard");
+//        mainContent.add(dashboardPanel, "Dashboard");
         mainContent.add(recipePanel, "Recipes");
         mainContent.add(othersPanel, "Others");
 //        mainContent.add(btnLogout, "Logout");
         frame.add(mainContent, BorderLayout.CENTER);
 
         // 🔹 Button Navigation
-        btnDashboard.addActionListener(e -> cardLayout.show(mainContent, "Dashboard"));
+//        btnDashboard.addActionListener(e -> cardLayout.show(mainContent, "Dashboard"));
         btnRecipes.addActionListener(e -> cardLayout.show(mainContent, "Recipes"));
-        btnOthers.addActionListener(e -> cardLayout.show(mainContent, "Others"));
+//        btnOthers.addActionListener(e -> cardLayout.show(mainContent, "Others"));
         btnLogout.addActionListener(e -> LogoutAction.performLogout(frame));
 
 

@@ -9,12 +9,17 @@ import java.awt.*;
 import ui.Cook.RecipiePanel;
 public class RecipeAddingPanel extends JPanel {
 
-    private JTextField nameField;
-    private JTextField categoryField;
-    private JTextArea ingredientsArea;
-    private JTextArea stepsArea;
-
-    private int userId; // ✅ store user ID for saving recipes
+public Runnable recipeAddedListener;
+//    private int userId; // ✅ store user ID for saving recipes
+	protected JTextField nameField;
+    protected JTextField categoryField;
+    protected JTextArea ingredientsArea;
+    protected JTextArea stepsArea;
+    protected JButton saveButton;
+    protected int userId;
+    public void setRecipeAddedListener(Runnable listener) {
+        this.recipeAddedListener = listener;
+    }
 
     public RecipeAddingPanel(int userId) {
 //    	RecipiePanel recipieLoader=new RecipiePanel(); 
@@ -114,10 +119,23 @@ public class RecipeAddingPanel extends JPanel {
         cardPanel.add(contentPanel, BorderLayout.CENTER);
 
         // === BOTTOM BUTTONS ===
+//        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 10));
+//        bottomPanel.setBackground(Color.WHITE);
+//
+//         saveButton = new JButton("💾 Save Recipe");
+//        JButton cancelButton = new JButton("Cancel");
+//        stylePrimaryButton(saveButton);
+//        styleSecondaryButton(cancelButton);
+//
+//        bottomPanel.add(cancelButton);
+//        bottomPanel.add(saveButton);
+//        cardPanel.add(bottomPanel, BorderLayout.SOUTH);
+        
+     // === BOTTOM BUTTONS ===
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 10));
         bottomPanel.setBackground(Color.WHITE);
 
-        JButton saveButton = new JButton("💾 Save Recipe");
+        saveButton = new JButton("💾 Save Recipe"); // ✅ FIXED: removed 'JButton' to use class variable
         JButton cancelButton = new JButton("Cancel");
         stylePrimaryButton(saveButton);
         styleSecondaryButton(cancelButton);
@@ -125,6 +143,7 @@ public class RecipeAddingPanel extends JPanel {
         bottomPanel.add(cancelButton);
         bottomPanel.add(saveButton);
         cardPanel.add(bottomPanel, BorderLayout.SOUTH);
+
 
         add(cardPanel, BorderLayout.CENTER);
 
@@ -136,6 +155,13 @@ public class RecipeAddingPanel extends JPanel {
                 frame.dispose(); // closes the window
             }
          
+        });
+        
+        cancelButton.addActionListener(e ->{
+        	 JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
+             if (frame != null) {
+                 frame.dispose(); // closes the window
+             }
         });
 
 
@@ -215,6 +241,11 @@ public class RecipeAddingPanel extends JPanel {
 
             JOptionPane.showMessageDialog(this, "✅ Recipe added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
             clearFields();
+            
+            // ✅ Notify parent to reload recipes
+            if (recipeAddedListener != null) {
+                recipeAddedListener.run();
+            }
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "❌ Error saving recipe: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             ex.printStackTrace();
@@ -276,6 +307,8 @@ public class RecipeAddingPanel extends JPanel {
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
         button.setBorder(BorderFactory.createEmptyBorder(8, 16, 8, 16));
     }
+
+	
 
    
 }

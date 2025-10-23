@@ -13,6 +13,7 @@ public class AdminPanel {
     private JFrame frame;
     private JPanel mainContent;
     private CardLayout cardLayout;
+    private boolean showDelete;
     public User loggedInUser;  
     public AdminPanel(User loggedInUser) {
     	
@@ -36,8 +37,9 @@ public class AdminPanel {
         mainContent = new JPanel(cardLayout);
 
         // Add panels
-        mainContent.add(new AdminDashBoard(), "Dashboard");
-        mainContent.add(new UserListpanel(cardLayout, mainContent), "UsersPanel");
+//        mainContent.add(new AdminDashBoard(), "Dashboard");
+        boolean showDelete = true;
+        mainContent.add(new UserListpanel(cardLayout, mainContent,showDelete), "UsersPanel");
         mainContent.add(new ViewerList(cardLayout, mainContent), "Viewers");
 //        mainContent.add(new UserRecipesPanel(cardLayout, mainContent), "UserRecipesPanel");
 
@@ -72,12 +74,12 @@ public class AdminPanel {
         sideMenu.setPreferredSize(new Dimension(200, 0));
         sideMenu.setBorder(BorderFactory.createEmptyBorder(20, 10, 10, 10));
 
-        JButton btnDashboard = createMenuButton("Dashboard");
+//        JButton btnDashboard = createMenuButton("Dashboard");
         JButton btnUsers = createMenuButton("Chefs");
         JButton btnViewers = createMenuButton("Viewers");
         JButton btnLogout = createMenuButton("Logout");
-
-        btnDashboard.addActionListener(e -> cardLayout.show(mainContent, "Dashboard"));
+//
+//        btnDashboard.addActionListener(e -> cardLayout.show(mainContent, "Dashboard"));
      
         btnUsers.addActionListener(e -> cardLayout.show(mainContent, "UsersPanel"));
         btnViewers.addActionListener(e -> cardLayout.show(mainContent, "Viewers"));
@@ -85,7 +87,7 @@ public class AdminPanel {
 
 
 
-        sideMenu.add(btnDashboard);
+//        sideMenu.add(btnDashboard);
         sideMenu.add(Box.createVerticalStrut(10));
         sideMenu.add(btnUsers);
         sideMenu.add(Box.createVerticalStrut(10));

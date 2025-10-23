@@ -1,3 +1,5 @@
+
+
 package ui.Cook;
 
 import javax.swing.*;
@@ -10,11 +12,13 @@ public class RecipeViewPanel extends JFrame {
 
     public RecipeViewPanel(int recipeId) {
         setTitle("Recipe Details");
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // closes only this frame
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(1000, 650);
-        setLocationRelativeTo(null); // center on screen
-        setLayout(new GridBagLayout());
+        setLocationRelativeTo(null);
         getContentPane().setBackground(new Color(245, 247, 250)); // light gray
+
+        // --- Use BorderLayout for the main frame ---
+        setLayout(new BorderLayout());
 
         // Fetch recipe
         try {
@@ -24,7 +28,7 @@ public class RecipeViewPanel extends JFrame {
         }
 
         if (this.recipe == null) {
-            add(new JLabel("Recipe not found!"));
+            add(new JLabel("Recipe not found!", SwingConstants.CENTER), BorderLayout.CENTER);
             setVisible(true);
             return;
         }
@@ -36,10 +40,11 @@ public class RecipeViewPanel extends JFrame {
                 BorderFactory.createEmptyBorder(20, 20, 20, 20)
         ));
         cardPanel.setBackground(Color.WHITE);
+        cardPanel.setPreferredSize(new Dimension(850, 550)); // ✅ nice consistent size
 
         // --- Top: Title ---
         JLabel titleLabel = new JLabel(recipe.getTitle(), SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 22));
+        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
         titleLabel.setForeground(new Color(40, 40, 40));
         titleLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 15, 0));
         cardPanel.add(titleLabel, BorderLayout.NORTH);
@@ -48,7 +53,7 @@ public class RecipeViewPanel extends JFrame {
         JPanel contentPanel = new JPanel(new GridBagLayout());
         contentPanel.setBackground(Color.WHITE);
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.insets = new Insets(10, 20, 10, 20);
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weighty = 1.0;
 
@@ -58,7 +63,7 @@ public class RecipeViewPanel extends JFrame {
         leftPanel.setBackground(Color.WHITE);
 
         JLabel categoryLabel = new JLabel("Category: " + recipe.getCategory());
-        categoryLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        categoryLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
         categoryLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JLabel ingredientsLabel = new JLabel("Ingredients:");
@@ -70,18 +75,12 @@ public class RecipeViewPanel extends JFrame {
         String ingredientsStr = recipe.getIngredients();
         if (ingredientsStr != null && !ingredientsStr.trim().isEmpty()) {
             StringBuilder sb = new StringBuilder();
-
-            // Split input into lines (each ingredient is on a new line)
             String[] ingredients = ingredientsStr.split("\\r?\\n");
-
-            // Go through each line
             for (String ing : ingredients) {
-                if (!ing.trim().isEmpty()) {  // skip empty lines
+                if (!ing.trim().isEmpty()) {
                     sb.append("• ").append(ing.trim()).append("\n");
                 }
             }
-
-            // Show formatted text in your ingredientsArea
             ingredientsArea.setText(sb.toString());
         }
 
@@ -94,7 +93,7 @@ public class RecipeViewPanel extends JFrame {
         JScrollPane ingScroll = new JScrollPane(ingredientsArea);
         ingScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         ingScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        ingScroll.setPreferredSize(new Dimension(300, 150));
+        ingScroll.setPreferredSize(new Dimension(300, 200));
         ingScroll.setBorder(BorderFactory.createLineBorder(new Color(220, 220, 220)));
 
         leftPanel.add(categoryLabel);
@@ -118,19 +117,15 @@ public class RecipeViewPanel extends JFrame {
         String stepsStr = recipe.getInstructions();
         if (stepsStr != null && !stepsStr.trim().isEmpty()) {
             StringBuilder sb = new StringBuilder();
-
-            // Split the string based on a full stop (.)
             String[] stepsArray = stepsStr.split("\\.");
-
             int stepNumber = 1;
             for (String step : stepsArray) {
-                step = step.trim(); // Remove extra spaces
-                if (!step.isEmpty()) { // Skip blank entries
+                step = step.trim();
+                if (!step.isEmpty()) {
                     sb.append(stepNumber).append(". ").append(step).append(".\n\n");
                     stepNumber++;
                 }
             }
-
             stepsArea.setText(sb.toString());
         }
         stepsArea.setFont(new Font("Segoe UI", Font.PLAIN, 14));
@@ -142,7 +137,7 @@ public class RecipeViewPanel extends JFrame {
         JScrollPane stepsScroll = new JScrollPane(stepsArea);
         stepsScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         stepsScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        stepsScroll.setPreferredSize(new Dimension(350, 250));
+        stepsScroll.setPreferredSize(new Dimension(400, 250));
         stepsScroll.setBorder(BorderFactory.createLineBorder(new Color(220, 220, 220)));
 
         rightPanel.add(stepsScroll);
@@ -168,15 +163,20 @@ public class RecipeViewPanel extends JFrame {
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         bottomPanel.setBackground(Color.WHITE);
         bottomPanel.add(backButton);
-
         cardPanel.add(bottomPanel, BorderLayout.SOUTH);
 
-        // --- Add cardPanel to frame ---
-        add(cardPanel);
+        // --- Wrapper panel for padding around the card ---
+        JPanel wrapperPanel = new JPanel(new BorderLayout());
+        wrapperPanel.setBackground(new Color(245, 247, 250));
+        wrapperPanel.setBorder(BorderFactory.createEmptyBorder(30, 60, 30, 60)); // padding around the card
+        wrapperPanel.add(cardPanel, BorderLayout.CENTER);
+
+        add(wrapperPanel, BorderLayout.CENTER);
 
         // --- Back Button Action ---
-        backButton.addActionListener(e -> dispose()); // simply closes this frame
+        backButton.addActionListener(e -> dispose());
 
         setVisible(true);
     }
 }
+
