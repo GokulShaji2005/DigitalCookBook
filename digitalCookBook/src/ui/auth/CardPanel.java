@@ -1,21 +1,43 @@
+/*
+ * File: CardPanel.java
+ * Author: Angelina Binoy
+ * Date: 2 October 2025
+ * Description:
+ *     This class represents a reusable card panel used in the Authentication UI.
+ *     It can act as a Login or Sign Up form based on the isSignUp flag. 
+ *     Provides fields for username, password, and role selection (for sign up),
+ *     along with a submit button. Includes helper methods to get input values 
+ *     and clear the form fields.
+ */
+
 package ui.auth;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class CardPanel extends JPanel {
-    JTextField username;
-    JPasswordField password;
-    JComboBox<String> roleCombo;
-    JButton submitButton;
-    JLabel titleLabel;
-    boolean isSignUp;
 
+    JTextField username;       // Input field for username
+    JPasswordField password;   // Input field for password
+    JComboBox<String> roleCombo; // Dropdown for role selection (only in sign up)
+    JButton submitButton;      // Submit button for login/sign up
+    JLabel titleLabel;         // Title of the card ("Login" or "Sign Up")
+    boolean isSignUp;          // Flag to indicate whether this panel is sign up or login
+
+    /**
+     * Constructor initializes the card panel.
+     * 
+     * @param isSignUp true if this is a Sign Up panel, false for Login panel
+     */
     public CardPanel(boolean isSignUp) {
         this.isSignUp = isSignUp;
         initComponents();
     }
 
+    /**
+     * Initialize all components of the card panel
+     * including labels, text fields, combo box, and submit button.
+     */
     private void initComponents() {
         this.setLayout(new GridBagLayout());
         this.setBackground(Color.WHITE);
@@ -29,7 +51,7 @@ public class CardPanel extends JPanel {
         gbc.insets = new Insets(10, 8, 10, 8);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Title
+        // 🔹 Title label
         titleLabel = new JLabel(isSignUp ? "Sign Up" : "Login", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 22));
         titleLabel.setForeground(new Color(40, 40, 40));
@@ -39,7 +61,7 @@ public class CardPanel extends JPanel {
         gbc.anchor = GridBagConstraints.CENTER;
         this.add(titleLabel, gbc);
 
-        // Username
+        // 🔹 Username label and field
         JLabel userLabel = new JLabel("Username:");
         userLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         gbc.gridy = 1;
@@ -62,7 +84,7 @@ public class CardPanel extends JPanel {
         gbc.anchor = GridBagConstraints.WEST;
         this.add(username, gbc);
 
-        // Password
+        // 🔹 Password label and field
         JLabel passLabel = new JLabel("Password:");
         passLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         gbc.gridx = 0;
@@ -84,7 +106,7 @@ public class CardPanel extends JPanel {
         gbc.anchor = GridBagConstraints.WEST;
         this.add(password, gbc);
 
-        // Role (only for sign up)
+        // 🔹 Role selection (only for Sign Up)
         if (isSignUp) {
             JLabel roleLabel = new JLabel("Role:");
             roleLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
@@ -103,7 +125,7 @@ public class CardPanel extends JPanel {
             this.add(roleCombo, gbc);
         }
 
-        // Submit button
+        // 🔹 Submit button
         submitButton = new JButton(isSignUp ? "Sign Up" : "Login");
         submitButton.setFont(new Font("Segoe UI", Font.BOLD, 15));
         submitButton.setBackground(new Color(0, 102, 128));
@@ -116,18 +138,36 @@ public class CardPanel extends JPanel {
         this.add(submitButton, gbc);
     }
 
+    /**
+     * Get the username entered in the form
+     *
+     * @return username as String
+     */
     public String getUsername() {
         return username.getText();
     }
 
+    /**
+     * Get the password entered in the form
+     *
+     * @return password as String
+     */
     public String getPassword() {
         return new String(password.getPassword());
     }
 
+    /**
+     * Get the selected role (only for Sign Up)
+     *
+     * @return selected role as String, or null if login form
+     */
     public String getRole() {
         return roleCombo != null ? (String) roleCombo.getSelectedItem() : null;
     }
 
+    /**
+     * Clear all input fields in the form
+     */
     public void clearFields() {
         username.setText("");
         password.setText("");
