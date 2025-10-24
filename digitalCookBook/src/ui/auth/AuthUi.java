@@ -1,3 +1,13 @@
+/*
+ * File: AuthUi.java
+ * Author: Angelina Binoy
+ * Date: 2 October 2025
+ * Description:
+ *     This class creates the Authentication UI for the application. 
+ *     It provides Login and Sign Up functionality using a CardLayout 
+ *     to switch between forms. Based on the user's role (Admin, Chef, Viewer),
+ *     it redirects to the appropriate dashboard after successful login.
+ */
 
 package ui.auth;
 
@@ -12,41 +22,47 @@ import model.User;
 import ui.viewer.*;
 
 public class AuthUi {
-    JFrame frame;
-    JPanel mainPanel;
-    CardLayout cardLayout;
-    JLabel toggleLabel;
-    CardPanel loginPanel;
-    CardPanel signUpPanel;
 
+    JFrame frame;             // Main window
+    JPanel mainPanel;         // Panel to hold login and signup forms
+    CardLayout cardLayout;    // Layout to switch between login and signup
+    JLabel toggleLabel;       // Label to toggle between login/signup
+    CardPanel loginPanel;     // Login form panel
+    CardPanel signUpPanel;    // Sign up form panel
+
+    /**
+     * Constructor initializes the authentication UI.
+     * Creates the login and signup forms and handles user interactions.
+     */
     public AuthUi() {
         frame = new JFrame("Authentication");
         frame.setSize(600, 500);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setLocationRelativeTo(null);
+        frame.setLocationRelativeTo(null); // Center window
 
-        // Background panel
+        // 🔹 Background panel with GridBagLayout
         JPanel backgroundPanel = new JPanel(new GridBagLayout());
         backgroundPanel.setBackground(new Color(230, 240, 250));
 
-        // Main panel (CardLayout)
+        // 🔹 Main panel holding login and signup cards
         mainPanel = new JPanel();
         cardLayout = new CardLayout();
         mainPanel.setLayout(cardLayout);
 
         // Create login and signup cards
-        loginPanel = new CardPanel(false);
-        signUpPanel = new CardPanel(true);
+        loginPanel = new CardPanel(false);  // false = login
+        signUpPanel = new CardPanel(true);  // true = signup
 
         mainPanel.add(loginPanel, "login");
         mainPanel.add(signUpPanel, "signup");
 
-        // Toggle label
+        // 🔹 Toggle label to switch between login and signup
         toggleLabel = new JLabel("Don't have an account? Sign Up", SwingConstants.CENTER);
         toggleLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         toggleLabel.setForeground(new Color(0, 102, 128));
         toggleLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
+        // Position components using GridBagConstraints
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridy = 1;
         gbc.insets = new Insets(20, 0, 0, 0);
@@ -57,23 +73,23 @@ public class AuthUi {
 
         frame.setContentPane(backgroundPanel);
 
-        // 🔹 Toggle between Login and Sign Up (MouseAdapter replaced with anonymous class)
+        // 🔹 Toggle between Login and Sign Up on click
         toggleLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (loginPanel.isVisible()) {
                     cardLayout.show(mainPanel, "signup");
                     toggleLabel.setText("Already have an account? Login");
-                    signUpPanel.clearFields();
+                    signUpPanel.clearFields(); // Clear form fields
                 } else {
                     cardLayout.show(mainPanel, "login");
                     toggleLabel.setText("Don't have an account? Sign Up");
-                    loginPanel.clearFields();
+                    loginPanel.clearFields(); // Clear form fields
                 }
             }
         });
 
-        // 🔹 Login button action (replaced lambda with ActionListener)
+        // 🔹 Login button action
         loginPanel.submitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ev) {
@@ -95,6 +111,7 @@ public class AuthUi {
 
                         String role = loggedInUser.getRole();
 
+                        // Redirect based on user role
                         if (role.equalsIgnoreCase("Chef")) {
                             new UserPanel(loggedInUser);
                         } else if (role.equalsIgnoreCase("Admin")) {
@@ -106,7 +123,7 @@ public class AuthUi {
                             return;
                         }
 
-                        frame.dispose();
+                        frame.dispose(); // Close login window
 
                     } else {
                         JOptionPane.showMessageDialog(frame,
@@ -123,7 +140,7 @@ public class AuthUi {
             }
         });
 
-        // 🔹 Sign Up button action (replaced lambda with ActionListener)
+        // 🔹 Sign Up button action
         signUpPanel.submitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ev) {
@@ -162,6 +179,11 @@ public class AuthUi {
         frame.setVisible(true);
     }
 
+    /**
+     * Set visibility of the Auth UI frame
+     *
+     * @param b true to show, false to hide
+     */
     public void setVisible(boolean b) {
         frame.setVisible(b);
     }

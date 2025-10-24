@@ -1,3 +1,13 @@
+/*
+ * File: UserListpanel.java
+ * Author: Angelina Binoy
+ * Date: 12 October 2025
+ * Description:
+ *     This class represents the panel displaying a list of registered chefs (users) 
+ *     in the Admin Dashboard. Each chef is displayed in a card with options to 
+ *     view their profile or delete them (if admin permission is granted). 
+ *     The panel uses a scrollable layout to handle large numbers of users.
+ */
 
 package ui.admin;
 
@@ -13,17 +23,24 @@ import ui.Cook.ChefProfile;
 
 public class UserListpanel extends JPanel {
 
+    /**
+     * Constructor to create the User List Panel
+     *
+     * @param cardLayout  CardLayout from parent panel for switching views
+     * @param mainContent Main content panel containing all views
+     * @param showDelete  Flag to indicate if delete buttons should be shown
+     */
     public UserListpanel(CardLayout cardLayout, JPanel mainContent, boolean showDelete) {
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
 
-        // 🔹 Header
+        // 🔹 Header label
         JLabel header = new JLabel("Registered Chefs", SwingConstants.CENTER);
         header.setFont(new Font("Segoe UI", Font.BOLD, 22));
         header.setBorder(new EmptyBorder(20, 0, 10, 0));
         add(header, BorderLayout.NORTH);
 
-        // 🔹 User list panel
+        // 🔹 Panel to hold individual user cards
         JPanel userListPanel = new JPanel();
         userListPanel.setLayout(new BoxLayout(userListPanel, BoxLayout.Y_AXIS));
         userListPanel.setBackground(Color.WHITE);
@@ -31,9 +48,10 @@ public class UserListpanel extends JPanel {
 
         try {
             UserDAO dao = new UserDAO();
-            List<User> chefs = dao.getChefs();
+            List<User> chefs = dao.getChefs(); // Fetch all registered chefs
 
             for (User user : chefs) {
+                // 🔹 Card panel for each user
                 JPanel card = new JPanel(new BorderLayout());
                 card.setBackground(new Color(250, 250, 250));
                 card.setBorder(new CompoundBorder(
@@ -41,28 +59,29 @@ public class UserListpanel extends JPanel {
                         new EmptyBorder(10, 15, 10, 15)
                 ));
 
+                // 🔹 Username label with chef emoji
                 JLabel name = new JLabel("👨‍🍳 " + user.getUsername());
                 name.setFont(new Font("Segoe UI", Font.PLAIN, 16));
 
+                // 🔹 Panel for action buttons (View, Delete)
                 JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
                 btnPanel.setOpaque(false);
 
-                // 🔹 View button
+                // 🔹 View profile button
                 JButton viewBtn = new JButton("View");
-                styleActionButton(viewBtn, new Color(46, 204, 113));
-
+                styleActionButton(viewBtn, new Color(46, 204, 113)); // Green button
                 viewBtn.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent ev) {
-                        new ChefProfile(user);
+                        new ChefProfile(user); // Open Chef Profile window
                     }
                 });
                 btnPanel.add(viewBtn);
 
-                // 🔹 Delete button for admin
+                // 🔹 Delete button (only if showDelete is true)
                 if (showDelete) {
                     JButton deleteBtn = new JButton("Delete");
-                    styleActionButton(deleteBtn, new Color(231, 76, 60));
+                    styleActionButton(deleteBtn, new Color(231, 76, 60)); // Red button
 
                     deleteBtn.addActionListener(new ActionListener() {
                         @Override
@@ -84,6 +103,7 @@ public class UserListpanel extends JPanel {
                                             "User deleted successfully!"
                                     );
 
+                                    // Remove card from panel and refresh UI
                                     userListPanel.remove(card);
                                     userListPanel.revalidate();
                                     userListPanel.repaint();
@@ -101,10 +121,12 @@ public class UserListpanel extends JPanel {
                     btnPanel.add(deleteBtn);
                 }
 
+                // Add name and button panel to card
                 card.add(name, BorderLayout.WEST);
                 card.add(btnPanel, BorderLayout.EAST);
-                card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 55));
+                card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 55)); // Fixed height
 
+                // Add card to user list panel with spacing
                 userListPanel.add(card);
                 userListPanel.add(Box.createVerticalStrut(10));
             }
@@ -113,11 +135,18 @@ public class UserListpanel extends JPanel {
             JOptionPane.showMessageDialog(this, "❌ Error loading users: " + e.getMessage());
         }
 
+        // Add scroll pane for the user list
         JScrollPane scrollPane = new JScrollPane(userListPanel);
         scrollPane.setBorder(null);
         add(scrollPane, BorderLayout.CENTER);
     }
 
+    /**
+     * Helper method to style action buttons consistently
+     *
+     * @param btn     JButton to style
+     * @param bgColor Background color of the button
+     */
     private void styleActionButton(JButton btn, Color bgColor) {
         btn.setBackground(bgColor);
         btn.setForeground(Color.WHITE);
@@ -126,6 +155,7 @@ public class UserListpanel extends JPanel {
         btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btn.setBorder(new EmptyBorder(6, 10, 6, 10));
 
+        // Hover effect: darken background on mouse over
         btn.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent e) {
                 btn.setBackground(bgColor.darker());
@@ -137,4 +167,3 @@ public class UserListpanel extends JPanel {
         });
     }
 }
-
