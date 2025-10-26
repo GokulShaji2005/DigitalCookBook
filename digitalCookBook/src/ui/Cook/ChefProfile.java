@@ -1,25 +1,38 @@
+
 package ui.Cook;
+
 import model.*;
 import util.StyleActionBtn;
 import javax.swing.*;
-
 import dao.recipeDao.RecipeTitle;
 import dao.recipeDao.RecipeDAO;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.List;
-import ui.Cook.RecipeViewPanel;
+
 public class ChefProfile extends JFrame implements ActionListener {
 
     private JLabel lblChefName, lblPosition, lblAvatar;
     private JPanel recipeListPanel;
     private JButton btnBack;
+    private User chef;
+private boolean canDeleteRecipes;
 
-    public ChefProfile(User chef) {
+   
+
+    private RecipeDAO fetchId = new RecipeDAO();
+    
+    // ✅ Constructor with viewer flag
+//    public ChefProfile( User chef,boolean showDelete) {
+////        this.loggedInUser = loggedInUser;
+//    	   this.chef = chef; 
+    public ChefProfile(User chef, boolean canDeleteRecipes) {
+        this.chef = chef;
+        this.canDeleteRecipes = canDeleteRecipes;
         // ===== Frame Setup =====
         setTitle("Chef Profile");
         setSize(850, 520);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
         getContentPane().setBackground(Color.WHITE);
@@ -39,17 +52,14 @@ public class ChefProfile extends JFrame implements ActionListener {
 
         // ===== Left Panel - Chef Details =====
         JPanel leftPanel = new JPanel();
-        leftPanel.setPreferredSize(new Dimension(300, 0)); // occupies a bit more space
+        leftPanel.setPreferredSize(new Dimension(300, 0));
         leftPanel.setBackground(new Color(255, 248, 240));
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
         leftPanel.setBorder(BorderFactory.createEmptyBorder(40, 30, 40, 30));
 
-        // Avatar (Profile Picture Placeholder)
+        // Avatar
         lblAvatar = new JLabel();
         lblAvatar.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        // 👇 Replace this path with your own avatar image file path if available
-        // Example: new ImageIcon("src/images/avatar.png")
         ImageIcon avatarIcon = new ImageIcon(new ImageIcon("avatar.png")
                 .getImage().getScaledInstance(120, 120, Image.SCALE_SMOOTH));
         lblAvatar.setIcon(avatarIcon);
@@ -87,7 +97,6 @@ public class ChefProfile extends JFrame implements ActionListener {
         lblRecipes.setFont(new Font("Serif", Font.BOLD, 20));
         lblRecipes.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
 
-        // Scroll Pane for Recipe List
         JScrollPane scrollPane = new JScrollPane(recipeListPanel);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
 
@@ -98,16 +107,18 @@ public class ChefProfile extends JFrame implements ActionListener {
 
         mainPanel.add(rightPanel, BorderLayout.CENTER);
 
-       loadRecipes(chef.getId());
+        // ===== Load Recipes =====
+        loadRecipes(chef.getId());
 
         setVisible(true);
     }
-    RecipeDAO fetchId = new RecipeDAO();
+
+    // ===== Load recipes by chef =====
     public void loadRecipes(int userId) {
         try {
             List<RecipeTitle> recipes = RecipeTitle.getRecipeTitles(userId);
             for (RecipeTitle r : recipes) {
-                addRecipeEntry(r.getId(),r.getTitle()); // use your helper to add dynamically
+                addRecipeEntry(r.getId(), r.getTitle());
             }
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
@@ -124,15 +135,16 @@ public class ChefProfile extends JFrame implements ActionListener {
         ));
         recipePanel.setBackground(new Color(252, 252, 252));
 
-        // Recipe name label
         JLabel lblRecipe = new JLabel("🍲 " + recipeName);
         lblRecipe.setFont(new Font("SansSerif", Font.PLAIN, 16));
 
-        // Buttons
-        JButton btnView = new JButton("View");
-        JButton btnDelete = new JButton("Delete");
+        // Button panel
+        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        btnPanel.setOpaque(false);
 
-        // ✅ Action Listeners
+        // ✅ View Button
+        JButton btnView = new JButton("View");
+        StyleActionBtn.styleActionButton(btnView, new Color(46, 204, 113));
         btnView.addActionListener(ev -> {
             try {
                 Recipe recipe = fetchId.getRecipeById(recipeId);
@@ -146,65 +158,82 @@ public class ChefProfile extends JFrame implements ActionListener {
                 JOptionPane.showMessageDialog(this, "Error loading recipe details.");
             }
         });
-
-        btnDelete.addActionListener(ev -> {
-            int confirm = JOptionPane.showConfirmDialog(
-                    this,
-                    "Are you sure you want to delete \"" + recipeName + "\"?",
-                    "Confirm Delete",
-                    JOptionPane.YES_NO_OPTION
-            );
-            if (confirm == JOptionPane.YES_OPTION) {
-                try {
-                    RecipeDAO dao = new RecipeDAO();
-                    dao.deleteRecipe(recipeId);
-                    recipeListPanel.remove(recipePanel);
-                    recipeListPanel.revalidate();
-                    recipeListPanel.repaint();
-                    JOptionPane.showMessageDialog(this, "Recipe deleted successfully.");
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                    JOptionPane.showMessageDialog(this, "Error deleting recipe.");
-                }
-            }
-        });
-
-        // ✅ Button Panel
-        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
-        btnPanel.setOpaque(false);
-        
-        StyleActionBtn.styleActionButton(btnView, new Color(46, 204, 113));
-
-     
-        StyleActionBtn.styleActionButton(btnDelete, new Color(231, 76, 60));
         btnPanel.add(btnView);
-        btnPanel.add(btnDelete);
+        System.out.println(chef.getRole());
 
-        // ✅ Add components properly
+//         ✅ Delete Button — Only if NOT viewer
+     
+//            JButton btnDelete = new JButton("Delete");
+//            StyleActionBtn.styleActionButton(btnDelete, new Color(231, 76, 60));
+//
+//            btnDelete.addActionListener(ev -> {
+//                int confirm = JOptionPane.showConfirmDialog(
+//                        this,
+//                        "Are you sure you want to delete \"" + recipeName + "\"?",
+//                        "Confirm Delete",
+//                        JOptionPane.YES_NO_OPTION
+//                );
+//                if (confirm == JOptionPane.YES_OPTION) {
+//                    try {
+//                        RecipeDAO dao = new RecipeDAO();
+//                        dao.deleteRecipe(recipeId);
+//                        recipeListPanel.remove(recipePanel);
+//                        recipeListPanel.revalidate();
+//                        recipeListPanel.repaint();
+//                        JOptionPane.showMessageDialog(this, "Recipe deleted successfully.");
+//                    } catch (Exception ex) {
+//                        ex.printStackTrace();
+//                        JOptionPane.showMessageDialog(this, "Error deleting recipe.");
+//                    }
+//                }
+//            });
+//            btnPanel.add(btnDelete);
+        
+        if (canDeleteRecipes) {
+            JButton btnDelete = new JButton("Delete");
+            StyleActionBtn.styleActionButton(btnDelete, new Color(231, 76, 60));
+
+            btnDelete.addActionListener(ev -> {
+                int confirm = JOptionPane.showConfirmDialog(
+                        this,
+                        "Are you sure you want to delete \"" + recipeName + "\"?",
+                        "Confirm Delete",
+                        JOptionPane.YES_NO_OPTION
+                );
+                if (confirm == JOptionPane.YES_OPTION) {
+                    try {
+                        RecipeDAO dao = new RecipeDAO();
+                        dao.deleteRecipe(recipeId);
+                        recipeListPanel.remove(recipePanel);
+                        recipeListPanel.revalidate();
+                        recipeListPanel.repaint();
+                        JOptionPane.showMessageDialog(this, "Recipe deleted successfully.");
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        JOptionPane.showMessageDialog(this, "Error deleting recipe.");
+                    }
+                }
+            });
+
+            btnPanel.add(btnDelete);
+        }
+
+//        
+
         recipePanel.add(lblRecipe, BorderLayout.WEST);
         recipePanel.add(btnPanel, BorderLayout.EAST);
 
-        // Add to recipe list
         recipeListPanel.add(recipePanel);
         recipeListPanel.add(Box.createRigidArea(new Dimension(0, 8)));
     }
+    
 
- 
-   
-
-	// ===== Event Handling =====
+    // ===== Event Handling =====
     @Override
     public void actionPerformed(ActionEvent e) {
-        String cmd = e.getActionCommand();
-
-        if (cmd.equals("Back")) {
-            JOptionPane.showMessageDialog(this, "Returning to Dashboard...");
-            dispose();
-        } else {
-            JOptionPane.showMessageDialog(this, "Viewing recipe: " + cmd);
+        if ("Back".equals(e.getActionCommand())) {
+            dispose(); // Just close the profile window
         }
     }
-
-    // ===== Test Run =====
-   
 }
+

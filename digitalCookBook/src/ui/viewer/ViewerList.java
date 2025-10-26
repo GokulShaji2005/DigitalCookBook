@@ -57,7 +57,7 @@ public class ViewerList extends JPanel {
                 viewBtn.addActionListener(e -> {
                     JOptionPane.showMessageDialog(this,
                             "👤 Viewing Chef: " + user.getUsername());
-                    new ChefProfile(user);
+                    new ChefProfile(user,true);
                 });
 
                 btnPanel.add(viewBtn);

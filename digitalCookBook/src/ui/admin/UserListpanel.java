@@ -12,12 +12,14 @@ import model.User;
 import ui.Cook.ChefProfile;
 
 public class UserListpanel extends JPanel {
-
-    public UserListpanel(CardLayout cardLayout, JPanel mainContent, boolean showDelete) {
-        setLayout(new BorderLayout());
+//    private User loggedInUser;
+    public UserListpanel(CardLayout cardLayout, JPanel mainContent,boolean showDelete) {
+//    	 this.loggedInUser = loggedInUser;
+    	setLayout(new BorderLayout());
         setBackground(Color.WHITE);
 
         // 🔹 Header
+//        boolean isViewer=false;
         JLabel header = new JLabel("Registered Chefs", SwingConstants.CENTER);
         header.setFont(new Font("Segoe UI", Font.BOLD, 22));
         header.setBorder(new EmptyBorder(20, 0, 10, 0));
@@ -32,7 +34,7 @@ public class UserListpanel extends JPanel {
         try {
             UserDAO dao = new UserDAO();
             List<User> chefs = dao.getChefs();
-
+             
             for (User user : chefs) {
                 JPanel card = new JPanel(new BorderLayout());
                 card.setBackground(new Color(250, 250, 250));
@@ -51,12 +53,18 @@ public class UserListpanel extends JPanel {
                 JButton viewBtn = new JButton("View");
                 styleActionButton(viewBtn, new Color(46, 204, 113));
 
-                viewBtn.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent ev) {
-                        new ChefProfile(user);
-                    }
-                });
+//                viewBtn.addActionListener(new ActionListener() {
+//                    @Override
+//                    public void actionPerformed(ActionEvent ev) {
+////                    	 new ChefProfile(user,false);
+////                    	new ChefProfile(user, true);
+//                    	// admin can delete recipes
+//
+//                    }
+//                });
+                
+                viewBtn.addActionListener(e -> new ChefProfile(user, true));
+
                 btnPanel.add(viewBtn);
 
                 // 🔹 Delete button for admin

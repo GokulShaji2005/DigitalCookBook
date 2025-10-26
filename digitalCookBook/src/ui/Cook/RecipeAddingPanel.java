@@ -11,7 +11,9 @@ public class RecipeAddingPanel extends JPanel {
 
     public Runnable recipeAddedListener;
     protected JTextField nameField;
-    protected JTextField categoryField;
+//    protected JTextField categoryField;
+    protected JComboBox<String> categoryCombo;
+
     protected JTextArea ingredientsArea;
     protected JTextArea stepsArea;
     protected JButton saveButton;
@@ -53,14 +55,23 @@ public class RecipeAddingPanel extends JPanel {
         JLabel nameLabel = createLabel("Recipe Name:");
         nameField = createTextField();
 
+//        JLabel categoryLabel = createLabel("Category:");
+//        categoryField = createTextField();
+        
         JLabel categoryLabel = createLabel("Category:");
-        categoryField = createTextField();
+
+     // Example static category list
+     String[] categories = {"Veg","Non-Veg","Dessert"};
+     categoryCombo = new JComboBox<>(categories);
+     styleComboBox(categoryCombo);
+
 
         JLabel ingredientsLabel = createLabel("Ingredients (one per line):");
         ingredientsArea = new JTextArea(8, 20);
         styleTextArea(ingredientsArea);
         JScrollPane ingredientScroll = new JScrollPane(ingredientsArea);
         ingredientScroll.setBorder(BorderFactory.createEmptyBorder());
+     
 
         leftPanel.add(nameLabel);
         leftPanel.add(Box.createVerticalStrut(5));
@@ -68,7 +79,9 @@ public class RecipeAddingPanel extends JPanel {
         leftPanel.add(Box.createVerticalStrut(10));
         leftPanel.add(categoryLabel);
         leftPanel.add(Box.createVerticalStrut(5));
-        leftPanel.add(categoryField);
+//        leftPanel.add(categoryField);
+        leftPanel.add(categoryCombo);
+
         leftPanel.add(Box.createVerticalStrut(10));
         leftPanel.add(ingredientsLabel);
         leftPanel.add(Box.createVerticalStrut(5));
@@ -132,7 +145,9 @@ public class RecipeAddingPanel extends JPanel {
 
     private void saveRecipe() {
         String name = nameField.getText().trim();
-        String category = categoryField.getText().trim();
+//        String category = categoryField.getText().trim();
+        String category = (String) categoryCombo.getSelectedItem();
+
         String ingredients = ingredientsArea.getText().trim();
         String steps = stepsArea.getText().trim();
 
@@ -162,7 +177,7 @@ public class RecipeAddingPanel extends JPanel {
 
     private void clearFields() {
         nameField.setText("");
-        categoryField.setText("");
+//        categoryField.setText("");
         ingredientsArea.setText("");
         stepsArea.setText("");
     }
@@ -214,4 +229,14 @@ public class RecipeAddingPanel extends JPanel {
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
         button.setBorder(BorderFactory.createEmptyBorder(8, 16, 8, 16));
     }
+    
+    private void styleComboBox(JComboBox<String> comboBox) {
+        comboBox.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        comboBox.setForeground(Color.DARK_GRAY);
+        comboBox.setBackground(Color.WHITE);
+        comboBox.setMaximumSize(new Dimension(Integer.MAX_VALUE, 35));
+        comboBox.setBorder(BorderFactory.createLineBorder(new Color(160, 160, 160)));
+        comboBox.setEditable(false); // make true if you want user to type custom category
+    }
+
 }

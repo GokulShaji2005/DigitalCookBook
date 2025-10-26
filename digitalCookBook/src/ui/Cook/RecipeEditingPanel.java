@@ -43,7 +43,9 @@ public class RecipeEditingPanel extends RecipeAddingPanel {
 
             if (existingRecipe != null) {
                 nameField.setText(existingRecipe.getTitle());
-                categoryField.setText(existingRecipe.getCategory());
+//                categoryField.setText(existingRecipe.getCategory());
+                categoryCombo.setSelectedItem(existingRecipe.getCategory());
+
                 ingredientsArea.setText(existingRecipe.getIngredients());
                 stepsArea.setText(existingRecipe.getInstructions());
             } else {
@@ -57,7 +59,10 @@ public class RecipeEditingPanel extends RecipeAddingPanel {
 
     private void updateRecipe() {
         String name = nameField.getText().trim();
-        String category = categoryField.getText().trim();
+//        String category = categoryField.getText().trim();
+//        String category = categoryField.getText().trim();
+        String category = (String) categoryCombo.getSelectedItem();
+
         String ingredients = ingredientsArea.getText().trim();
         String steps = stepsArea.getText().trim();
 

@@ -3,10 +3,13 @@ package ui.admin;
 
 import javax.swing.*;
 import model.User;
+import ui.Cook.ChefAnnounce;
 import ui.auth.AuthUi;
+import ui.viewer.ViewerAnnounce;
 import util.LogoutAction;
 import java.awt.*;
 import java.awt.event.*;
+import ui.admin.AdminAnnounce;
 
 public class AdminPanel {
     private JFrame frame;
@@ -40,6 +43,9 @@ public class AdminPanel {
         boolean showDelete = true;
         mainContent.add(new UserListpanel(cardLayout, mainContent, showDelete), "UsersPanel");
         mainContent.add(new ViewerList(cardLayout, mainContent), "Viewers");
+        mainContent.add(new AdminAnnounce(loggedInUser), "Announcements");
+      
+   
 
         frame.add(mainContent, BorderLayout.CENTER);
         frame.setVisible(true);
@@ -74,7 +80,7 @@ public class AdminPanel {
         JButton btnUsers = createMenuButton("Chefs");
         JButton btnViewers = createMenuButton("Viewers");
         JButton btnLogout = createMenuButton("Logout");
-
+        JButton btnAnnouncements=createMenuButton("Announcements");
         // === Traditional ActionListeners (no lambdas) ===
         btnUsers.addActionListener(new ActionListener() {
             @Override
@@ -96,11 +102,15 @@ public class AdminPanel {
                 LogoutAction.performLogout(frame);
             }
         });
+        btnAnnouncements.addActionListener(e -> cardLayout.show(mainContent, "Announcements"));
 
         sideMenu.add(Box.createVerticalStrut(10));
         sideMenu.add(btnUsers);
         sideMenu.add(Box.createVerticalStrut(10));
         sideMenu.add(btnViewers);
+        sideMenu.add(Box.createVerticalStrut(10));
+        sideMenu.add(btnAnnouncements);
+      
         sideMenu.add(Box.createVerticalGlue());
         sideMenu.add(btnLogout);
 

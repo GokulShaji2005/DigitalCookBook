@@ -57,7 +57,7 @@ public class AuthUi {
 
         frame.setContentPane(backgroundPanel);
 
-        // 🔹 Toggle between Login and Sign Up (MouseAdapter replaced with anonymous class)
+        // 🔹 Toggle between Login and Sign Up 
         toggleLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -73,7 +73,7 @@ public class AuthUi {
             }
         });
 
-        // 🔹 Login button action (replaced lambda with ActionListener)
+        // 🔹 Login button action 
         loginPanel.submitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ev) {
@@ -123,7 +123,7 @@ public class AuthUi {
             }
         });
 
-        // 🔹 Sign Up button action (replaced lambda with ActionListener)
+        // 🔹 Sign Up button action 
         signUpPanel.submitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ev) {

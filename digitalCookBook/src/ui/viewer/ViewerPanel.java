@@ -1,5 +1,3 @@
-
-
 package ui.viewer;
 
 import javax.swing.*;
@@ -17,13 +15,15 @@ public class ViewerPanel {
 
     private RecipeList recipeListPanel;
     private Favourites favouritesPanel;
+    private ViewerAnnounce viewerAnnouncePanel;
 
     public ViewerPanel(User loggedInUser) {
         this.loggedInUser = loggedInUser;
 
-        // Initialize favourites first, then RecipeList with reference
+        // Initialize panels
         favouritesPanel = new Favourites(loggedInUser);
         recipeListPanel = new RecipeList(loggedInUser, favouritesPanel);
+        viewerAnnouncePanel = new ViewerAnnounce(loggedInUser);
 
         // JFrame setup
         frame = new JFrame("Recipe Manager - Viewer Dashboard");
@@ -41,10 +41,10 @@ public class ViewerPanel {
         mainContent = new JPanel(cardLayout);
         mainContent.add(recipeListPanel, "Recipe");
         mainContent.add(favouritesPanel, "Favourites");
-        mainContent.add(new ChefList(cardLayout, createSideMenu()), "ChefList");
-        mainContent.add(new ViewerList(cardLayout, mainContent), "ViewerPanel");
-
+        mainContent.add(new ViewChefList(cardLayout, mainContent), "ChefList"); // Chef list panel
+        mainContent.add(viewerAnnouncePanel, "Announcements"); // Announcements panel
         frame.add(mainContent, BorderLayout.CENTER);
+
         frame.setVisible(true);
     }
 
@@ -76,43 +76,27 @@ public class ViewerPanel {
         JButton btnRecipes = createMenuButton("Recipes");
         JButton btnUsers = createMenuButton("Chefs");
         JButton btnFav = createMenuButton("Favourites");
+        JButton btnAnnouncements = createMenuButton("Announcements");
         JButton btnLogout = createMenuButton("Logout");
 
-        // Switch panels using anonymous inner classes
-        btnRecipes.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                cardLayout.show(mainContent, "Recipe");
-            }
+        // Navigation
+        btnRecipes.addActionListener(e -> cardLayout.show(mainContent, "Recipe"));
+        btnFav.addActionListener(e -> {
+            favouritesPanel.loadFavouriteRecipes();
+            cardLayout.show(mainContent, "Favourites");
         });
+        btnUsers.addActionListener(e -> cardLayout.show(mainContent, "ChefList"));
+        btnAnnouncements.addActionListener(e -> cardLayout.show(mainContent, "Announcements"));
+        btnLogout.addActionListener(e -> LogoutAction.performLogout(frame));
 
-        btnFav.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                favouritesPanel.loadFavouriteRecipes(); // refresh favourites
-                cardLayout.show(mainContent, "Favourites");
-            }
-        });
-
-        btnUsers.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                cardLayout.show(mainContent, "ChefList");
-            }
-        });
-
-        btnLogout.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                LogoutAction.performLogout(frame);
-            }
-        });
-
+        // Add buttons to side menu
         sideMenu.add(btnRecipes);
         sideMenu.add(Box.createVerticalStrut(10));
         sideMenu.add(btnUsers);
         sideMenu.add(Box.createVerticalStrut(10));
         sideMenu.add(btnFav);
+        sideMenu.add(Box.createVerticalStrut(10));
+        sideMenu.add(btnAnnouncements);
         sideMenu.add(Box.createVerticalGlue());
         sideMenu.add(btnLogout);
 
@@ -135,7 +119,6 @@ public class ViewerPanel {
             public void mouseEntered(MouseEvent e) {
                 btn.setBackground(new Color(80, 140, 220));
             }
-
             @Override
             public void mouseExited(MouseEvent e) {
                 btn.setBackground(new Color(60, 120, 200));
@@ -144,5 +127,3 @@ public class ViewerPanel {
         return btn;
     }
 }
-
-
