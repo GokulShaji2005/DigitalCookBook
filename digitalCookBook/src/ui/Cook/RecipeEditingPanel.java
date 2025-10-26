@@ -56,13 +56,42 @@ public class RecipeEditingPanel extends RecipeAddingPanel {
             e.printStackTrace();
         }
     }
-
+//
+//    private void updateRecipe() {
+//        String name = nameField.getText().trim();
+////        String category = categoryField.getText().trim();
+////        String category = categoryField.getText().trim();
+//        String category = (String) categoryCombo.getSelectedItem();
+//
+//        String ingredients = ingredientsArea.getText().trim();
+//        String steps = stepsArea.getText().trim();
+//
+//        if (name.isEmpty() || category.isEmpty() || ingredients.isEmpty() || steps.isEmpty()) {
+//            JOptionPane.showMessageDialog(this, "⚠ Please fill all fields!", "Warning", JOptionPane.WARNING_MESSAGE);
+//            return;
+//        }
+//
+//        existingRecipe.setTitle(name);
+//        existingRecipe.setCategory(category);
+//        existingRecipe.setIngredients(ingredients);
+//        existingRecipe.setInstructions(steps);
+//        existingRecipe.setUser_id(userId);
+//
+//        try {
+//            RecipeDAO dao = new RecipeDAO();
+//            dao.updateRecipe(existingRecipe);
+//            JOptionPane.showMessageDialog(this, "✅ Recipe updated successfully!");
+//            JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
+//            if (frame != null) frame.dispose();
+//        } catch (Exception ex) {
+//            JOptionPane.showMessageDialog(this, "❌ Update failed: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+//            ex.printStackTrace();
+//        }
+//    }
+    
     private void updateRecipe() {
         String name = nameField.getText().trim();
-//        String category = categoryField.getText().trim();
-//        String category = categoryField.getText().trim();
         String category = (String) categoryCombo.getSelectedItem();
-
         String ingredients = ingredientsArea.getText().trim();
         String steps = stepsArea.getText().trim();
 
@@ -77,10 +106,17 @@ public class RecipeEditingPanel extends RecipeAddingPanel {
         existingRecipe.setInstructions(steps);
         existingRecipe.setUser_id(userId);
 
+        if (selectedImageFile != null) {
+            existingRecipe.setImagePath(selectedImageFile.getAbsolutePath());
+        }
+
         try {
             RecipeDAO dao = new RecipeDAO();
             dao.updateRecipe(existingRecipe);
             JOptionPane.showMessageDialog(this, "✅ Recipe updated successfully!");
+
+            if (recipeAddedListener != null) recipeAddedListener.run();
+
             JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
             if (frame != null) frame.dispose();
         } catch (Exception ex) {
@@ -88,5 +124,6 @@ public class RecipeEditingPanel extends RecipeAddingPanel {
             ex.printStackTrace();
         }
     }
+
 }
 

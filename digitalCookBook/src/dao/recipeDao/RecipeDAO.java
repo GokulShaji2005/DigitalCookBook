@@ -1,3 +1,4 @@
+
 package dao.recipeDao;
 
 import dao.dbConnection.DBConnection;
@@ -5,21 +6,12 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import model.Recipe;
-/*
- * Author: @AmyAnup
- * Date: 13/10/25
- *
- * RecipeDAO.java
- * Simple DAO class to manage recipes in the database.
- * Supports: Add, Read (All), Update, Delete recipes.
- */
-
 
 public class RecipeDAO {
 
-    // ✅ Add a new recipe
+    // ✅ Add a new recipe (with optional image)
     public void addRecipe(Recipe recipe) throws ClassNotFoundException {
-        String sql = "INSERT INTO recipe (title, ingredients, instructions, category, user_id) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO recipe (title, ingredients, instructions, category, user_id, image_path) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -29,12 +21,13 @@ public class RecipeDAO {
             stmt.setString(3, recipe.getInstructions());
             stmt.setString(4, recipe.getCategory());
             stmt.setInt(5, recipe.getUser_id());
+            stmt.setString(6, recipe.getImagePath()); // ✅ added
 
             stmt.executeUpdate();
 
             ResultSet rs = stmt.getGeneratedKeys();
             if (rs.next()) {
-                recipe.setRecipe_Id(rs.getInt(1)); // ✅ fixed setter name
+                recipe.setRecipe_Id(rs.getInt(1));
             }
 
             System.out.println("✅ Recipe added successfully! ID: " + recipe.getRecipe_Id());
@@ -57,13 +50,14 @@ public class RecipeDAO {
 
             while (rs.next()) {
                 Recipe r = new Recipe(
-                        rs.getInt("recipe_id"), // or rs.getInt("recipe_id") depending on your table
+                        rs.getInt("recipe_id"),
                         rs.getString("title"),
                         rs.getString("ingredients"),
                         rs.getString("instructions"),
                         rs.getString("category"),
-                        rs.getInt("user_id"), // ✅ corrected from String to int
-                        rs.getTimestamp("created_at")
+                        rs.getInt("user_id"),
+                        rs.getTimestamp("created_at"),
+                        rs.getString("image_path") // ✅ added
                 );
                 list.add(r);
             }
@@ -74,7 +68,8 @@ public class RecipeDAO {
 
         return list;
     }
-    
+
+    // ✅ Get single recipe by ID
     public Recipe getRecipeById(int recipeId) throws ClassNotFoundException {
         String sql = "SELECT * FROM recipe WHERE recipe_id = ?";
         Recipe recipe = null;
@@ -93,7 +88,8 @@ public class RecipeDAO {
                         rs.getString("instructions"),
                         rs.getString("category"),
                         rs.getInt("user_id"),
-                        rs.getTimestamp("created_at")
+                        rs.getTimestamp("created_at"),
+                        rs.getString("image_path") // ✅ added
                 );
             }
 
@@ -104,10 +100,9 @@ public class RecipeDAO {
         return recipe;
     }
 
-
-    
+    // ✅ Update recipe (including image)
     public void updateRecipe(Recipe recipe) throws ClassNotFoundException {
-        String sql = "UPDATE recipe SET title=?, ingredients=?, instructions=?, category=?, user_id=? WHERE recipe_id=?";
+        String sql = "UPDATE recipe SET title=?, ingredients=?, instructions=?, category=?, user_id=?, image_path=? WHERE recipe_id=?";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -116,8 +111,9 @@ public class RecipeDAO {
             stmt.setString(2, recipe.getIngredients());
             stmt.setString(3, recipe.getInstructions());
             stmt.setString(4, recipe.getCategory());
-            stmt.setInt(5, recipe.getUser_id());       // <-- add user_id
-            stmt.setInt(6, recipe.getRecipe_Id());     // recipe_id in WHERE clause
+            stmt.setInt(5, recipe.getUser_id());
+            stmt.setString(6, recipe.getImagePath()); // ✅ added
+            stmt.setInt(7, recipe.getRecipe_Id());
 
             int rows = stmt.executeUpdate();
             System.out.println("✅ " + rows + " recipe(s) updated.");
@@ -128,8 +124,7 @@ public class RecipeDAO {
         }
     }
 
-
-    // ✅ Delete a recipe by ID
+    // ✅ Delete recipe
     public void deleteRecipe(int id) throws ClassNotFoundException {
         String sql = "DELETE FROM recipe WHERE recipe_id=?";
 
