@@ -1,6 +1,4 @@
-DigitalCookBook
 
-DigitalCookBook is a Java Swing-based Recipe Manager for creating, editing, browsing and managing recipes, users and favourites. It's a compact desktop application built with the Java Platform (Swing) and JDBC.
 
 ## Project Title
 
