@@ -72,7 +72,6 @@ public class Favourites extends JPanel {
         recipeListPanel.repaint();
     }
 
-    // 🔹 Add recipe card WITHOUT favourite button
     private void addRecipe(final int recipeId, String recipeName) {
         JPanel card = new JPanel(new BorderLayout());
         card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 70));
@@ -88,7 +87,7 @@ public class Favourites extends JPanel {
         JButton viewBtn = new JButton("View");
         util.StyleActionBtn.styleActionButton(viewBtn, new Color(46, 204, 113));
 
-        // 🔹 Modern lambda ActionListener
+ 
         viewBtn.addActionListener(e -> new ui.Cook.RecipeViewPanel(recipeId));
 
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));

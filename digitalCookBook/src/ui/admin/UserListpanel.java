@@ -53,15 +53,7 @@ public class UserListpanel extends JPanel {
                 JButton viewBtn = new JButton("View");
                 styleActionButton(viewBtn, new Color(46, 204, 113));
 
-//                viewBtn.addActionListener(new ActionListener() {
-//                    @Override
-//                    public void actionPerformed(ActionEvent ev) {
-////                    	 new ChefProfile(user,false);
-////                    	new ChefProfile(user, true);
-//                    	// admin can delete recipes
-//
-//                    }
-//                });
+//           
                 
                 viewBtn.addActionListener(e -> new ChefProfile(user, true));
 

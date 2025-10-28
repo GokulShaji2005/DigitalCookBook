@@ -21,11 +21,7 @@ private boolean canDeleteRecipes;
    
 
     private RecipeDAO fetchId = new RecipeDAO();
-    
-    // ✅ Constructor with viewer flag
-//    public ChefProfile( User chef,boolean showDelete) {
-////        this.loggedInUser = loggedInUser;
-//    	   this.chef = chef; 
+
     public ChefProfile(User chef, boolean canDeleteRecipes) {
         this.chef = chef;
         this.canDeleteRecipes = canDeleteRecipes;
@@ -161,33 +157,7 @@ private boolean canDeleteRecipes;
         btnPanel.add(btnView);
         System.out.println(chef.getRole());
 
-//         ✅ Delete Button — Only if NOT viewer
-     
-//            JButton btnDelete = new JButton("Delete");
-//            StyleActionBtn.styleActionButton(btnDelete, new Color(231, 76, 60));
-//
-//            btnDelete.addActionListener(ev -> {
-//                int confirm = JOptionPane.showConfirmDialog(
-//                        this,
-//                        "Are you sure you want to delete \"" + recipeName + "\"?",
-//                        "Confirm Delete",
-//                        JOptionPane.YES_NO_OPTION
-//                );
-//                if (confirm == JOptionPane.YES_OPTION) {
-//                    try {
-//                        RecipeDAO dao = new RecipeDAO();
-//                        dao.deleteRecipe(recipeId);
-//                        recipeListPanel.remove(recipePanel);
-//                        recipeListPanel.revalidate();
-//                        recipeListPanel.repaint();
-//                        JOptionPane.showMessageDialog(this, "Recipe deleted successfully.");
-//                    } catch (Exception ex) {
-//                        ex.printStackTrace();
-//                        JOptionPane.showMessageDialog(this, "Error deleting recipe.");
-//                    }
-//                }
-//            });
-//            btnPanel.add(btnDelete);
+
         
         if (canDeleteRecipes) {
             JButton btnDelete = new JButton("Delete");

@@ -50,8 +50,7 @@ public class ViewChefList extends JPanel {
                 viewBtn.setFont(new Font("Segoe UI", Font.BOLD, 13));
                 viewBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-                // 👀 Viewer cannot delete recipes → pass false
-//                viewBtn.addActionListener(e -> new ChefProfile(chef, false));
+             
                 viewBtn.addActionListener(e -> new ChefProfile(chef, false));
 
                 card.add(name, BorderLayout.WEST);
