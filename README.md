@@ -11,14 +11,70 @@ DigitalCookBook is a small, modular Java desktop application that helps cooks, c
 This repository contains the full source code under `src/` and is structured so it can be built and run with a standard Java toolchain (JDK 11+ recommended).
 
 ## Features
+✨ Features
+👤 User Management
 
-- User authentication (Sign up / Login / Logout)
-- Add, edit, view and delete recipes
-- Recipe categorization and search by title/category
-- Mark and view favourite recipes
-- Admin dashboard for managing users and viewers
-- Clean Swing UI separated into logical panels (auth, cook, viewer, admin)
-- Simple JDBC-based persistence (see `dao/dbConnection/DBConnection.java`)
+Three types of users: Admin, Chef, and Viewer
+
+Sign Up as a Chef or Viewer
+
+Login / Logout functionality with role-based access
+
+Secure credential storage and validation
+
+🧑‍🍳 Chef Features
+
+Add new recipes with:
+
+Title
+
+Ingredients
+
+Category (Veg, Non-Veg, Dessert)
+
+Image upload
+
+Step-by-step instructions
+
+Edit or Delete owned recipes
+
+View Admin Announcements in a dedicated announcement panel
+
+👁️ Viewer Features
+
+Browse all recipes
+
+Search recipes by title or filter by category (via dropdown)
+
+Mark recipes as Favourite / Unfavourite
+
+View all favourite recipes in a separate Favourites Section
+
+Browse Chef List and view all recipes by a particular chef
+
+Access Announcements made by the admin
+
+🧑‍💼 Admin Features
+
+Manage users:
+
+View and Delete Chefs and their recipes
+
+View and Delete Viewers
+
+Announcement System:
+
+Create announcements for:
+
+Chefs
+
+Viewers
+
+Both
+
+Manage and remove announcements
+
+Centralized dashboard to monitor all users and recipes
 
 ## Installation
 
