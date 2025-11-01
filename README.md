@@ -54,6 +54,13 @@ This repository contains the full source code under `src/` and is structured so 
 
 ---
 
+## 💾 Technical Overview
+- **Language:** Java (JDK 11+)
+- **UI:** Swing
+- **Database:** JDBC-based persistence
+- **Architecture:** Layered (`dao`, `model`, `service`, `ui`)
+- **Entry Point:** `Main.java` (launches the Swing UI)
+
 ## Installation
 
 Prerequisites:
