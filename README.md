@@ -62,7 +62,7 @@ This repository contains the full source code under `src/` and is structured so 
 - **Entry Point:** `Main.java` (launches the Swing UI)
 
 ## 📁 Project Structure 
-
+```
 digitalCookBook/
 │
 ├── src/
@@ -118,6 +118,7 @@ digitalCookBook/
 │
 ├── README.md
 └── .gitignore
+```
 ## Installation
 
 Prerequisites:
