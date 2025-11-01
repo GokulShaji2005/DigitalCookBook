@@ -61,6 +61,63 @@ This repository contains the full source code under `src/` and is structured so 
 - **Architecture:** Layered (`dao`, `model`, `service`, `ui`)
 - **Entry Point:** `Main.java` (launches the Swing UI)
 
+## 📁 Project Structure 
+
+digitalCookBook/
+│
+├── src/
+│ ├── dao/
+│ │ ├── dbConnection/
+│ │ │ └── DBConnection.java
+│ │ ├── RecipeDao.java
+│ │ ├── UserDao.java
+│ │ └── ...
+│ │
+│ ├── model/
+│ │ ├── User.java
+│ │ ├── Recipe.java
+│ │ ├── Announcement.java
+│ │ └── ...
+│ │
+│ ├── service/
+│ │ ├── AuthService.java
+│ │ ├── RecipeService.java
+│ │ ├── AnnouncementService.java
+│ │ └── ...
+│ │
+│ ├── ui/
+│ │ ├── auth/
+│ │ │ ├── LoginPage.java
+│ │ │ ├── SignUpPage.java
+│ │ │ └── ...
+│ │ │
+│ │ ├── admin/
+│ │ │ ├── AdminDashboard.java
+│ │ │ ├── AnnouncementPanel.java
+│ │ │ └── ...
+│ │ │
+│ │ ├── chef/
+│ │ │ ├── ChefDashboard.java
+│ │ │ ├── AddRecipeForm.java
+│ │ │ └── ...
+│ │ │
+│ │ ├── viewer/
+│ │ │ ├── ViewerDashboard.java
+│ │ │ ├── FavouritePanel.java
+│ │ │ └── ...
+│ │ │
+│ │ └── Main.java
+│ │
+│ ├── util/
+│ │ ├── LogoutAction.java
+│ │ └── StyleActionBtn.java
+│ │
+│ └── resources/
+│ ├── icons/
+│ └── images/
+│
+├── README.md
+└── .gitignore
 ## Installation
 
 Prerequisites:
