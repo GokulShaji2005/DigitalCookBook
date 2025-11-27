@@ -181,10 +181,3 @@ When contributing, please:
 
 This project is provided under the MIT License. You can copy, modify and distribute the code. Replace this block with a different license if you prefer.
 
----
-
-If you'd like, I can:
-- Add a simple build script (Ant, Maven or Gradle) and a runnable JAR target.
-- Create a quick start script for Windows (batch or PowerShell) that compiles and runs the app.
-
-Let me know which you'd prefer.
